@@ -1,0 +1,380 @@
+﻿@model cartItemViewModel
+@{
+    var userAddress = Model.Address;
+    string dis = "disabled";
+    var PickUpLocation = ViewData["pickUpLocation"] as List<LocalPickUp>;
+}
+
+<div class="container">
+    <!-- Title -->
+    <div class="d-flex justify-content-between align-items-center py-3">
+        <h2 class="mb-0"><a href="#" class="text-muted"></a>Checkout</h2>
+        <button id="backButton" class="btn btn-secondary">Back to Cart</button>
+    </div>
+
+    <!-- Main content -->
+    <div class="row">
+        <div class="col-lg-10 offset-lg-1">
+            <!-- Details -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="mb-3 d-flex justify-content-between">
+                        <div>
+                            <span class="me-3"><strong>Products</strong></span>
+                        </div>
+                        <div class="d-flex">
+                            @* <button class="btn btn-link p-0 me-3 d-none d-lg-block btn-icon-text"><i class="bi bi-download"></i> <span class="text">Invoice</span></button> *@
+                            <div class="dropdown">
+                                <button class="btn btn-link p-0 text-muted" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#"><i class="bi bi-pencil"></i> Edit</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="bi bi-printer"></i> Print</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-borderless">
+                        <tbody>
+                            @foreach (var item in Model.CartItem)
+                            {
+                                var product = Model.Product.FirstOrDefault(p => p.Id == item.ProductId);
+                                var productImages = Model.Image.Where(img => img.ProductId == product.Id).ToList();
+                                var productReviews = Model.Review.Where(rv => rv.ProductId == item.ProductId).ToList();
+                                <tr>
+                                    <td>
+                                        <div class="d-flex mb-2">
+                                            <div class="flex-shrink-0">
+                                                <img src="~/@productImages.First().ImagePath" alt="" width="35" class="img-fluid">
+                                            </div>
+                                            <div class="flex-lg-grow-1 ms-3">
+                                                <h6 class="small mb-0"><a href="#" class="text-reset">@product.Name (@product.Brand)</a></h6>
+                                                <span class="small">Color: @product.Color</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@item.Quantity</td>
+                                    @{
+                                        decimal subSubTotal = item.Quantity * Convert.ToDecimal(product.MainPrice);
+                                    }
+                                    <td class="text-end">@subSubTotal</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot class="border-top">
+                            <tr>
+                                <td colspan="2" class="py-0">Subtotal</td>
+                                <td class="text-end py-0">GH¢<span id="subtotal">@Convert.ToDecimal(@TempData["Total"])</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="py-0">Shipping Fee</td>
+                                <td class="text-end py-0"><span id="optionCost"></span></td>
+                            </tr>
+                            <tr class="fw-bold">
+                                <td colspan="2">TOTAL</td>
+                                <td class="text-end" id="totalCost"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <form method="post" id="checkoutForm" asp-action="Payment" asp-controller="Orders">
+                <!-- Payment Method -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h3 class="h6">Payment Method</h3>
+                                <select id="paymentMethod" class="form-select" name="PaymentMethod" required>
+                                    <option>select a payment option.. </option>
+                                    @foreach (var option in Model.PaymentOptions)
+                                    {
+                                        <option value="@option.Id"
+                                                data-description="@option.Description">
+                                            @option.Name
+                                        </option>
+                                    }
+                                </select>
+                                <div class="mt-1 px-2">
+                                    <p id="paymentOptionDescription" class="pb-0 mb-0" style="line-height:1.1"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delivery Method -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h3 class="h6">Delivery Option</h3>
+                                <select id="deliveryMethod" class="form-select" name="DeliveryMethod" required >
+                                    <option><p mute>select a delivery option </p></option>
+                                    @foreach (var option in Model.DeliveryOption)
+                                    {
+                                        <option value="@option.Id"
+                                                data-description="@option.Description"
+                                                data-cost="@option.Cost">
+                                            @option.Name
+                                        </option>
+                                    }
+                                </select>
+                                <div class="mt-1 px-2">
+                                    <p id="optionDescription" class="pb-0 mb-0" style="line-height:1.1"></p>
+                                    <div class="container-fluid px-0">
+                                        <div class="row px-0 mx-0">
+                                            <div class="col ps-0">
+                                                <strong><p id="optionEstimatedDate" class="pt-1 mb-0"></p></strong>
+                                            </div>
+                                            <div class="col text-end pe-0">
+                                                <strong><p id="optiionCost" class="pt-1 mb-0"></p></strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Hidden fields to store session data -->
+                                <input type="hidden" name="DeliveryOptionDescription" id="hiddenOptionDescription">
+                                <input type="hidden" name="DeliveryOptionEstimatedDate" id="hiddenOptionEstimatedDate">
+                                <input type="hidden" name="DeliveryOptionCost" id="hiddenOptionCost">
+                                <input type="hidden" name="PaymentOptionDescription" id="hiddenPaymentOptionDescription">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Pickup Locations -->
+                <div class="card mb-4" id="pickupLocationCard" style="display: none;">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h3 class="h6">Pickup Locations</h3>
+                                <select id="pickuplocation" class="form-select" name="LocalPickUp">
+                                    @if (PickUpLocation != null)
+                                    {
+
+                                        @foreach (var option in PickUpLocation)
+                                        {
+                                            <option value="Local Pick Up (@option.Name)" data-address="@option.AddressLine">
+                                                @option.Name
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                                <div class="mt-1 px-2">
+                                    <p id="localpickAddress" class="pb-0 mb-0" style="line-height:1.1"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                <div class="">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="h6">Shipping Information</h3>
+                            <hr>
+                            <h3 class="h6">Address</h3>
+                            @if (userAddress != null)
+                            {
+                                <address>
+                                    <p class="my-0 py-0" style="line-height:1.1">@userAddress.AdressLine, @userAddress.StreetNumber</p>
+                                    <p class="my-0 py-0" style="line-height:1.1">@userAddress.City, @userAddress.Region, @userAddress.PostalCods</p>
+                                    <p class="my-0 py-0" style="line-height:1.1">@userAddress.DigitalAddress</p>
+                                    <p class="my-0 py-0" style="line-height:1.1">@userAddress.Country</p>
+                                    <p class="my-0 py-0" style="line-height:1.1">@TempData["Tell"]</p>
+                                    <hr class="my-2" />
+                                    <a asp-page="/Account/Manage/Address" asp-route-data="FromCheckOut" class="btn btn-outline-info btn-sm">Modify</a>
+                                </address>
+                                dis = "";
+                            }else
+                            {
+                                dis = "disabled";
+                                <a asp-page="/Account/Manage/Address" class="btn btn-outline-info btn-sm">Add Address</a>
+                            }
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <button @dis type="submit" class="btn btn-success mt-2 w-50">Next <span><i class="fa fa-arrow-right mx-3"></i></span></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Elements for Delivery Method
+        const deliveryMethodSelect = document.getElementById('deliveryMethod');
+        const optionDescription = document.getElementById('optionDescription');
+        const optionEstimatedDate = document.getElementById('optionEstimatedDate');
+        const optionCost = document.getElementById('optionCost');
+        const hiddenOptionDescription = document.getElementById('hiddenOptionDescription');
+        const hiddenOptionEstimatedDate = document.getElementById('hiddenOptionEstimatedDate');
+        const hiddenOptionCost = document.getElementById('hiddenOptionCost');
+        const pickupLocationCard = document.getElementById('pickupLocationCard');
+        const pickupLocationSelect = document.getElementById('pickuplocation');
+        var subtotal = parseFloat(document.getElementById("subtotal").textContent); 
+        const localpickAddress = document.getElementById('localpickAddress');
+
+        // Elements for Payment Method
+        const paymentMethodSelect = document.getElementById('paymentMethod');
+        const paymentOptionDescription = document.getElementById('paymentOptionDescription');
+        const hiddenPaymentOptionDescription = document.getElementById('hiddenPaymentOptionDescription');
+
+        // Load saved details from session storage for Delivery Method
+        const savedDeliveryMethod = sessionStorage.getItem('deliveryMethod');
+        if (savedDeliveryMethod) {
+            deliveryMethodSelect.value = savedDeliveryMethod;
+            updateDeliveryMethodDetails();
+        }
+
+        // Load saved details from session storage for Payment Method
+        const savedPaymentMethod = sessionStorage.getItem('paymentMethod');
+        if (savedPaymentMethod) {
+            paymentMethodSelect.value = savedPaymentMethod;
+            updatePaymentMethodDetails();
+        }
+
+        // Load saved pickup location from session storage
+        const savedPickupLocation = sessionStorage.getItem('pickupLocation');
+        if (savedPickupLocation) {
+            pickupLocationSelect.value = savedPickupLocation;
+        }
+
+        // Event listener for Delivery Method change
+        deliveryMethodSelect.addEventListener('change', function () {
+            sessionStorage.setItem('deliveryMethod', this.value);
+            updateDeliveryMethodDetails();
+        });
+
+        // Event listener for Payment Method change
+        paymentMethodSelect.addEventListener('change', function () {
+            sessionStorage.setItem('paymentMethod', this.value);
+            updatePaymentMethodDetails();
+        });
+
+        // Event listener for Pickup Location change
+        pickupLocationSelect.addEventListener('change', function () {
+            sessionStorage.setItem('pickupLocation', this.value);
+        });
+
+        // Update details for Delivery Method
+        function updateDeliveryMethodDetails() {
+            const selectedOption = deliveryMethodSelect.selectedOptions[0];
+            if (selectedOption) {
+                const description = selectedOption.getAttribute('data-description');
+                const cost = parseFloat(selectedOption.getAttribute('data-cost'));
+                var optiionCost = document.getElementById("optiionCost");
+                let estimatedDate = '';
+
+                const today = new Date();
+                if (selectedOption.textContent.includes("Standard")) {
+                    estimatedDate = addDays(today, 3) + " - " + addDays(today, 5);
+                } else if (selectedOption.textContent.includes("Expedited")) {
+                    estimatedDate = addDays(today, 1) + addDays(today, 2);
+                } else if (selectedOption.textContent.includes("Express")) {
+                    estimatedDate = today.toISOString().split('T')[0];
+                }else if (selectedOption.textContent.includes("Local Pickup")) {
+                    estimatedDate = addDays(today, 3) + " - " + addDays(today, 5);
+                }
+
+                if (description != "null") {
+                    optionDescription.textContent = description;
+                }
+                optionEstimatedDate.textContent = estimatedDate;
+
+                if (cost >= 0) {
+                    optionCost.textContent = 'GH¢' + cost.toFixed(2);
+                    optiionCost.textContent = 'GH¢' + cost.toFixed(2);
+                } else {
+                    optiionCost.textContent = 'GH¢0.00';
+                    document.getElementById('optionCost').textContent = 'GH¢0.00';
+                    optionCost.textContent = 'GH¢0.00';
+                }
+
+                const totalCost = subtotal + cost;
+                if (totalCost >= 0) {
+                    document.getElementById('totalCost').textContent = 'GH¢' + totalCost.toFixed(2);
+                } else {
+                    document.getElementById('totalCost').textContent = 'GH¢' + subtotal;
+                }
+
+                sessionStorage.setItem('optionDescription', description);
+                sessionStorage.setItem('optionEstimatedDate', estimatedDate);
+                sessionStorage.setItem('optionCost', cost);
+                sessionStorage.setItem('optiioncost', cost);
+
+                hiddenOptionDescription.value = description;
+                hiddenOptionEstimatedDate.value = estimatedDate;
+                hiddenOptionCost.value = cost;
+
+                // Show or hide the pickup location card based on selected delivery method
+                if (selectedOption.textContent.includes("Local pickup") || selectedOption.textContent.includes("Local Pickup")) {
+                    pickupLocationCard.style.display = 'block';
+                } else {
+                    pickupLocationCard.style.display = 'none';
+                }
+            }
+        }
+
+        // Helper function to add days to the current date
+        function addDays(date, days) {
+            let result = new Date(date);
+            result.setDate(result.getDate() + days);
+            return result.toISOString().split('T')[0];
+        }
+
+        // Update details for Payment Method
+        function updatePaymentMethodDetails() {
+            const selectedOption = paymentMethodSelect.selectedOptions[0];
+            if (selectedOption) {
+                const description = selectedOption.getAttribute('data-description');
+                paymentOptionDescription.textContent = description;
+                sessionStorage.setItem('paymentOptionDescription', description);
+                hiddenPaymentOptionDescription.value = description;
+            }
+        }
+
+        // Load saved details from session storage
+        optionDescription.textContent = sessionStorage.getItem('optionDescription') || '';
+        optionEstimatedDate.textContent = sessionStorage.getItem('optionEstimatedDate') || '';
+        optionCost.textContent = sessionStorage.getItem('optionCost') ? 'GH¢' + parseFloat(sessionStorage.getItem('optionCost')).toFixed(2) : '';
+        paymentOptionDescription.textContent = sessionStorage.getItem('paymentOptionDescription') || '';
+
+        hiddenOptionDescription.value = sessionStorage.getItem('optionDescription') || '';
+        hiddenOptionEstimatedDate.value = sessionStorage.getItem('optionEstimatedDate') || '';
+        hiddenOptionCost.value = sessionStorage.getItem('optionCost') || '';
+        hiddenPaymentOptionDescription.value = sessionStorage.getItem('paymentOptionDescription') || '';
+
+        // Initialize display state for pickup location card
+        updateDeliveryMethodDetails();
+
+
+        // Event listener for Pickup Location change
+        pickupLocationSelect.addEventListener('change', function () {
+            const selectedOption = pickupLocationSelect.selectedOptions[0];
+            const address = selectedOption.getAttribute('data-address');
+            localpickAddress.textContent = address ? address : '';
+        });
+
+        // Initialize display state for pickup location card
+        function updatePickupLocationDetails() {
+            const selectedOption = pickupLocationSelect.selectedOptions[0];
+            const address = selectedOption.getAttribute('data-address');
+            localpickAddress.textContent = address ? address : '';
+        }
+
+        updatePickupLocationDetails();
+    });
+</script>
+

@@ -1,0 +1,12 @@
+﻿@model CartWishlistViewModel
+
+<li class="nav-item">
+    <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Cart">
+        <i class="fa fa-shopping-cart"></i> Cart ( @Model.CartItemsCount )
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Wishlist">
+        <i class="fa fa-heart"></i> Wishlist ( @Model.WishlistItemsCount )
+    </a>
+</li>

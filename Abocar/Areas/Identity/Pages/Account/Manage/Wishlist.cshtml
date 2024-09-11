@@ -1,0 +1,100 @@
+﻿@page
+@model Abocar.Areas.Identity.Pages.Account.Manage.Wishlist
+@{
+    ViewData["Title"] = "Wishlist";
+    var products = ViewData["WishList"] as List<WishlistViewModel>;
+}
+
+<div class="container my-4">
+    <h1 class="mb-4">Wishlist</h1>
+    <div class="row mt-3">
+        <div class="row justify-content-center">
+            @{
+                if (products == null)
+                {
+                    <div class="alert alert-warning" role="alert">
+                        Your cart is empty.
+                    </div>
+                }
+                else 
+                {
+                    foreach (var product in products)
+                    {
+                        
+                        int totalRating = 0;
+                        int ratingCount = 0;
+                        double averageRating = 0;
+                        ratingCount = product.Review.Count;
+                        totalRating = product.Review.Sum(x => x.Rating);
+
+                        if (ratingCount > 0)
+                        {
+                            averageRating = (double)totalRating / ratingCount;
+                        }
+
+                        <div class="product-card m-2 p-0 col-3">
+                            <a asp-action="Details" asp-controller="Products" asp-route-id="@product.Product.Id">
+                                <div class="product-image p-0">
+                                    @if (product.Image.Name != null)
+                                    {
+                                        <img src="~/@product.Image.ImagePath" alt="Product Image">
+                                    }
+                                    else
+                                    {
+                                        <img src="~/img/product/product13.jpg" alt="Product Image">
+                                    }
+                                </div>
+                            </a>
+                            <div class="product-detals p-2">
+                                <h2 class="product-name mb-0">@product.Product.Name (@product.Product.Brand)</h2>
+                                <p class="product-price my-0">
+                                    <span style="text-decoration:line-through; color:red;">GH$@product.Product.Price</span>
+                                    GH$@product.Product.MainPrice
+                                </p>
+                                <p class="product-description p-0 my-0">
+                                    @product.Product.Description
+                                </p>
+                                <div class="product-rating my-0">
+                                    @for (int i = 0; i < Math.Floor(averageRating); i++)
+                                    {
+                                        <span class="fa fa-star checked" style="color: #f39c12; font-size:9px"></span>
+                                    }
+                                    @if (averageRating - Math.Floor(averageRating) >= 0.5)
+                                    {
+                                        <span class="fa fa-star-half-alt" style="color: #f39c12; font-size:9px"></span>
+                                    }
+                                    @for (int i = 0; i < 5 - Math.Ceiling(averageRating); i++)
+                                    {
+                                        <span class="fa fa-star" style="color: #c7c5bf; font-size:9px"></span>
+                                    }
+                                    <span>(@ratingCount reviews)</span>
+                                </div>
+                            </div>
+                            <div class="container-fluid mb-2 px-0">
+                                <div class="row mx-0 px-0">
+                                    <div class="col-8 px-0">
+                                        <div class="add-to-car-container mb-0 mt-0">
+                                            <a asp-action="AddToCart" asp-controller="Products" asp-route-id="@product.Product.Id" class="add-to-cart-btn w-100 px-5 mb-0 pt-1 pb-2"><i class="fas fa-shopping-cart"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 px-0">
+                                        <form method="post" asp-page-handler="Delete" class="d-inline">
+                                            <input type="hidden" name="Id" value="@product.Product.Id" />
+                                            <button type="submit" class="btn btn-danger mt-0 pb-0">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                }
+                
+            }
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,0 +1,229 @@
+﻿@model Product;
+@{
+    
+}
+
+
+<style>
+    #editor {
+        width: 100%;
+        height: 200px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 20px;
+        overflow-y: auto;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3>Create Product</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" class="needs-validation" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="form-group">
+                            <label asp-for="Name">Product Name</label>
+                            <input asp-for="Name" class="form-control" id="productName" placeholder="Enter product name" required>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>      
+                        <div class="form-group">
+                            <label asp-for="Description">Short Description</label>
+                            <textarea asp-for="Description" class="form-control"></textarea>
+                            @* <span asp-validation-for="Description" class="text-danger"></span> *@
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="FullDestription">Description</label>
+                            <div id="editor" contenteditable="true" placeholder="Enter product description"></div>
+                            <input asp-for="FullDestription" id="productDescription" type="hidden">
+                            @* <span asp-validation-for="FullDescription" class="text-danger"></span> *@
+                        </div>
+
+
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label asp-for="Price">Price</label>
+                                <input asp-for="Price" type="number" class="form-control" id="productPrice" placeholder="Enter price" required>
+                                <span asp-validation-for="Price" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label asp-for="DiscountedPrice">Discounted Price</label>
+                                <input asp-for="DiscountedPrice" type="number" class="form-control" id="productDiscountedPrice" placeholder="Enter discounted price">
+                                <span asp-validation-for="DiscountedPrice" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Brand">Brand</label>
+                            <input asp-for="Brand" class="form-control" id="productBrand" placeholder="Enter brand">
+                            <span asp-validation-for="Brand" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="StockQuantity">Stock Quantity</label>
+                            <input asp-for="StockQuantity" type="number" class="form-control" id="productStockQuantity" placeholder="Enter stock quantity">
+                            <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="SubCategoryId">Select Subcategories</label>
+                            <select asp-for="SubCategoryId" class="form-control" id="productSubCategory" asp-items="ViewBag.SubCategoryId"></select>
+                            <span asp-validation-for="SubCategoryId" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label asp-for="Size">Size</label>
+                                <input asp-for="Size" class="form-control" id="productSize" placeholder="Enter size">
+                                <span asp-validation-for="Size" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label asp-for="Color">Color</label>
+                                <input asp-for="Color" class="form-control" id="productColor" placeholder="Enter color">
+                                <span asp-validation-for="Color" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label asp-for="Length">Length</label>
+                                <input asp-for="Length" type="number" class="form-control" id="productLength" placeholder="Enter length">
+                                <span asp-validation-for="Length" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label asp-for="Width">Width</label>
+                                <input asp-for="Width" type="number" class="form-control" id="productWidth" placeholder="Enter width">
+                                <span asp-validation-for="Width" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label asp-for="Height">Height</label>
+                                <input asp-for="Height" type="number" class="form-control" id="productHeight" placeholder="Enter height">
+                                <span asp-validation-for="Height" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label asp-for="Weight">Weight</label>
+                                <input asp-for="Weight" type="number" class="form-control" id="productWeight" placeholder="Enter weight">
+                                <span asp-validation-for="Weight" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary">Create</button>
+                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Elements for Delivery Method
+        const deliveryMethodSelect = document.getElementById('deliveryMethod');
+        const optionDescription = document.getElementById('optionDescription');
+        const optionEstimatedDate = document.getElementById('optionEstimatedDate');
+        const optionCost = document.getElementById('optionCost');
+        const hiddenOptionDescription = document.getElementById('hiddenOptionDescription');
+        const hiddenOptionEstimatedDate = document.getElementById('hiddenOptionEstimatedDate');
+        const hiddenOptionCost = document.getElementById('hiddenOptionCost');
+        var subtotal = parseFloat(document.getElementById("subtotal").textContent);
+
+        // Elements for Payment Method
+        const paymentMethodSelect = document.getElementById('paymentMethod');
+        const paymentOptionDescription = document.getElementById('paymentOptionDescription');
+        const hiddenPaymentOptionDescription = document.getElementById('hiddenPaymentOptionDescription');
+
+        // Load saved details from session storage for Delivery Method
+        const savedDeliveryMethod = sessionStorage.getItem('deliveryMethod');
+        if (savedDeliveryMethod) {
+            deliveryMethodSelect.value = savedDeliveryMethod;
+            updateDeliveryMethodDetails();
+        }
+
+        // Load saved details from session storage for Payment Method
+        const savedPaymentMethod = sessionStorage.getItem('paymentMethod');
+        if (savedPaymentMethod) {
+            paymentMethodSelect.value = savedPaymentMethod;
+            updatePaymentMethodDetails();
+        }
+
+        // Event listener for Delivery Method change
+        deliveryMethodSelect.addEventListener('change', function () {
+            sessionStorage.setItem('deliveryMethod', this.value);
+            updateDeliveryMethodDetails();
+        });
+
+        // Event listener for Payment Method change
+        paymentMethodSelect.addEventListener('change', function () {
+            sessionStorage.setItem('paymentMethod', this.value);
+            updatePaymentMethodDetails();
+        });
+
+        // Update details for Delivery Method
+        function updateDeliveryMethodDetails() {
+            const selectedOption = deliveryMethodSelect.selectedOptions[0];
+            if (selectedOption) {
+                const description = selectedOption.getAttribute('data-description');
+                const estimatedDate = selectedOption.getAttribute('data-estimateddate');
+                const cost = parseFloat(selectedOption.getAttribute('data-cost'));
+                var optiionCost = document.getElementById("optiionCost");
+
+                optionDescription.textContent = description;
+                optionEstimatedDate.textContent = estimatedDate;
+                optionCost.textContent = '$' + cost.toFixed(2);
+                optiionCost.textContent = '$' + cost.toFixed(2);
+
+
+                const totalCost = subtotal + cost;
+                document.getElementById('totalCost').textContent = '$' + totalCost.toFixed(2);
+
+                sessionStorage.setItem('optionDescription', description);
+                sessionStorage.setItem('optionEstimatedDate', estimatedDate);
+                sessionStorage.setItem('optionCost', cost);
+                sessionStorage.setItem('optiioncost', cost);
+
+                hiddenOptionDescription.value = description;
+                hiddenOptionEstimatedDate.value = estimatedDate;
+                hiddenOptionCost.value = cost;
+            }
+        }
+
+        // Update details for Payment Method
+        function updatePaymentMethodDetails() {
+            const selectedOption = paymentMethodSelect.selectedOptions[0];
+            if (selectedOption) {
+                const description = selectedOption.getAttribute('data-description');
+                paymentOptionDescription.textContent = description;
+                sessionStorage.setItem('paymentOptionDescription', description);
+                hiddenPaymentOptionDescription.value = description;
+            }
+        }
+
+        // Load saved details from session storage
+        optionDescription.textContent = sessionStorage.getItem('optionDescription') || '';
+        optionEstimatedDate.textContent = sessionStorage.getItem('optionEstimatedDate') || '';
+        optionCost.textContent = sessionStorage.getItem('optionCost') ? '$' + parseFloat(sessionStorage.getItem('optionCost')).toFixed(2) : '';
+        paymentOptionDescription.textContent = sessionStorage.getItem('paymentOptionDescription') || '';
+
+        hiddenOptionDescription.value = sessionStorage.getItem('optionDescription') || '';
+        hiddenOptionEstimatedDate.value = sessionStorage.getItem('optionEstimatedDate') || '';
+        hiddenOptionCost.value = sessionStorage.getItem('optionCost') || '';
+        hiddenPaymentOptionDescription.value = sessionStorage.getItem('paymentOptionDescription') || '';
+    });
+</script>

@@ -1,0 +1,246 @@
+﻿@page
+@model Abocar.Areas.Identity.Pages.Account.Manage.OptionsModel
+@{
+    ViewData["Title"] = "Options";
+    var DeliveryOptions = ViewData["DeliveryOptions"] as List<DeliveryOption>;
+    var PaymentOptions = ViewData["PaymentOptions"] as List<PaymentOption>;
+    var LocalPickUps = ViewData["LocalPickPoints"] as List<LocalPickUp>;
+    var SubCategories = ViewData["SubCategories"] as List<SubCategory>;
+    var Brands = ViewData["Brands"] as List<Brand>;
+}
+
+<div class="container">
+    <!-- Payment Options -->
+    <div class="row mb-3">
+        <div class="card p-3">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-8">
+                        <h3><strong>Payment Options</strong></h3>
+                    </div>
+                    <div class="col d-flex justify-content-end align-items-center">
+                        <a class="btn btn-outline-primary btn-sm" asp-action="Create" asp-route-data="Payment" asp-controller="DeliveryOptions">Add</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table text-start">
+                            <thead class="table-head">
+                                <tr class="table-row">
+                                    <td>Name</td>
+                                    <td>Description</td>
+                                    <td>Action</td>
+                                </tr>
+                            </thead>
+                            <tbody class="table-body">
+                                @if (PaymentOptions != null)
+                                {
+                                    @foreach (var item in PaymentOptions)
+                                    {
+                                        <tr>
+                                            <td style="color:@(item.isActive ? "black" : "red")">@item.Name</td>
+                                            <td style="color:@(item.isActive ? "black" : "red")">@item.Description</td>
+                                            <td>
+                                                <a class="btn btn-outline-primary" asp-controller="DeliveryOptions" asp-action="Edit" asp-route-id="@item.Id" asp-route-data="Payment"><i class="fa fa-pencil"></i></a>
+                                                <a class="btn btn-outline-danger" asp-page-handler="DeleteOption" asp-route-id="@item.Id" asp-route-data="Payment"><i class="fa fa-trash" onclick="confirmDelete(event)"></i></a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delivery Options -->
+    <div class="row my-3">
+        <div class="card p-3">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-8">
+                        <h3><strong>Delivery Options</strong></h3>
+                    </div>
+                    <div class="col d-flex justify-content-end align-items-center">
+                        <a class="btn btn-outline-primary btn-sm" asp-action="Create" asp-route-data="Delivery" asp-controller="DeliveryOptions">Add</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table text-start">
+                            <thead class="table-head">
+                                <tr class="table-row">
+                                    <td>Name</td>
+                                    <td>Description</td>
+                                    <td>Action</td>
+                                </tr>
+                            </thead>
+                            <tbody class="table-body">
+                                @if (DeliveryOptions != null)
+                                {
+                                    @foreach (var item in DeliveryOptions)
+                                    {
+                                        <tr>
+                                            <td style="color:@(item.isActive ? "black" : "red")">@item.Name</td>
+                                            <td style="color:@(item.isActive ? "black" : "red")">@item.Description</td>
+                                            <td>
+                                                <a class="btn btn-outline-primary" asp-controller="DeliveryOptions" asp-action="Edit" asp-route-id="@item.Id" asp-route-data="Delivery"><i class="fa fa-pencil"></i></a>
+                                                <a class="btn btn-outline-danger" asp-page-handler="DeleteOption" asp-route-id="@item.Id" asp-route-data="Delivery"><i class="fa fa-trash" onclick="confirmDelete(event)"></i></a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pickup Locations -->
+    <div class="row my-3">
+        <div class="card p-3">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-8">
+                        <h3><strong>Pickup Locations</strong></h3>
+                    </div>
+                    <div class="col d-flex justify-content-end align-items-center">
+                        <a class="btn btn-outline-primary btn-sm" asp-action="Create" asp-route-data="PickUps" asp-controller="DeliveryOptions">Add</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table text-start">
+                            <thead class="table-head">
+                                <tr class="table-row">
+                                    <td>Name</td>
+                                    <td>Address</td>
+                                    <td>Action</td>
+                                </tr>
+                            </thead>
+                            <tbody class="table-body">
+                                @if (LocalPickUps != null)
+                                {
+                                    @foreach (var item in LocalPickUps)
+                                    {
+                                        <tr>
+                                            <td style="color:@(item.isActive ? "black" : "red")">@item.Name</td>
+                                            <td style="color:@(item.isActive ? "black" : "red")">@item.AddressLine</td>
+                                            <td>
+                                                <a class="btn btn-outline-primary" asp-controller="DeliveryOptions" asp-action="Edit" asp-route-id="@item.Id" asp-route-data="PickUps"><i class="fa fa-pencil"></i></a>
+                                                <a class="btn btn-outline-danger" asp-page-handler="DeleteOption" asp-route-id="@item.Id" asp-route-data="LocalPickUp"><i class="fa fa-trash" onclick="confirmDelete(event)"></i></a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- categories-->
+    <div class="row my-3">
+        <div class="card p-3">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-8">
+                        <h3><strong>Product Categories</strong></h3>
+                    </div>
+                    <div class="col d-flex justify-content-end align-items-center">
+                        <a class="btn btn-outline-primary btn-sm" asp-action="Create"  asp-controller="SubCategories" asp-route-data="subCategory">Add</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table text-start">
+                            <thead class="table-head">
+                                <tr class="table-row">
+                                    <td>Name</td>
+                                    <td>Description</td>
+                                    <td>Action</td>
+                                </tr>
+                            </thead>
+                            <tbody class="table-body">
+                                @if (SubCategories != null)
+                                {
+                                    @foreach (var item in SubCategories)
+                                    {
+                                        <tr>
+                                            <td>@item.Name</td>
+                                            <td>@item.Description</td>
+                                            <td>
+                                                <a class="btn btn-outline-primary" asp-controller="SubCategories" asp-action="Edit" asp-route-id="@item.Id" asp-route-data="subCategory"><i class="fa fa-pencil"></i></a>
+                                                <a class="btn btn-outline-danger" asp-page-handler="DeleteOption" asp-route-id="@item.Id" asp-route-data="SubCategories"><i class="fa fa-trash" onclick="confirmDelete(event)"></i></a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Brands-->
+    <div class="row my-3">
+        <div class="card p-3">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-8">
+                        <h3><strong>Brands</strong></h3>
+                    </div>
+                    <div class="col d-flex justify-content-end align-items-center">
+                        <a class="btn btn-outline-primary btn-sm" asp-action="Create" asp-controller="SubCategories" asp-route-data="brand">Add</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table text-start">
+                            <thead class="table-head">
+                                <tr class="table-row">
+                                    <td>Name</td>
+                                    <td>Action</td>
+                                </tr>
+                            </thead>
+                            <tbody class="table-body">
+                                @if (Brands != null)
+                                {
+                                    @foreach (var item in Brands)
+                                    {
+                                        <tr>
+                                            <td>@item.Name</td>
+                                            <td>
+                                                <a class="btn btn-outline-primary" asp-controller="SubCategories" asp-action="Edit" asp-route-id="@item.Id" asp-route-data="brands"><i class="fa fa-pencil"></i></a>
+                                                <a class="btn btn-outline-danger" asp-page-handler="DeleteOption" asp-route-id="@item.Id" asp-route-data="SubCategories"><i class="fa fa-trash" onclick="confirmDelete(event)"></i></a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+    function confirmDelete(event) {
+        var result = confirm("Are you sure you want to delete this item?");
+        if (!result) {
+            event.preventDefault(); // Prevent the default action (navigation)
+        }
+    }
+</script>

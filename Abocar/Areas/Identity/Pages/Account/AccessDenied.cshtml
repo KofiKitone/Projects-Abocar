@@ -1,0 +1,12 @@
+﻿@page
+@model AccessDeniedModel
+@{
+    ViewData["Title"] = "Access denied";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="height:80vh">
+    <div class="card p-5">
+        <h1 class="text-danger text-center">@ViewData["Title"]</h1>
+        <p class="text-danger text-center">You do not have access to this resource.</p>
+    </div>
+</div>

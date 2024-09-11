@@ -1,0 +1,173 @@
+﻿@model Abocar.Models.Product
+
+@{
+    ViewData["Title"] = "Create";
+    var brands = ViewData["Brands"] as List<Brand>;
+}
+
+<style>
+    #editor {
+        width: 100%;
+        height: 200px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 20px;
+        overflow-y: auto;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row mb-2">
+        <h1>Add Product</h1>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form asp-action="Create" class="needs-validation" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="form-group">
+                            <label asp-for="Name">Product Name</label>
+                            <input asp-for="Name" class="form-control" id="productName" placeholder="Enter product name" required>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>      
+                        <div class="form-group">
+                            <label asp-for="Description">Short Description</label>
+                            <textarea asp-for="Description" class="form-control"></textarea>
+                            @* <span asp-validation-for="Description" class="text-danger"></span> *@
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="FullDestription">Description</label>
+                            <div id="editor" contenteditable="true" placeholder="Enter product description"></div>
+                            <input asp-for="FullDestription" id="productDescription" type="hidden">
+                            @* <span asp-validation-for="FullDescription" class="text-danger"></span> *@
+                        </div>
+
+
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label asp-for="Price">Price</label>
+                                <input asp-for="Price" type="number" class="form-control" id="productPrice" placeholder="Enter price" required>
+                                <span asp-validation-for="Price" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label asp-for="DiscountedPrice">Discounted Price</label>
+                                <input asp-for="DiscountedPrice" type="number" class="form-control" id="productDiscountedPrice" placeholder="Enter discounted price">
+                                <span asp-validation-for="DiscountedPrice" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Brand">Brand</label>
+                            <select asp-for="Brand" class="form-select" id="productBrand" placeholder="Enter brand">
+                                @if (brands != null)
+                                {
+                                    foreach(var brand in brands)
+                                    {
+                                        <option value="@brand.Name">@brand.Name</option>
+                                    }
+                                }
+                                
+                            </select>
+                            <span asp-validation-for="Brand" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="StockQuantity">Stock Quantity</label>
+                            <input asp-for="StockQuantity" type="number" class="form-control" id="productStockQuantity" placeholder="Enter stock quantity">
+                            <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="SubCategoryId">Select Subcategories</label>
+                            <select asp-for="SubCategoryId" class="form-control" id="productSubCategory" asp-items="ViewBag.SubCategoryId"></select>
+                            <span asp-validation-for="SubCategoryId" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label asp-for="Size">Size</label>
+                                <input asp-for="Size" class="form-control" id="productSize" placeholder="Enter size">
+                                <span asp-validation-for="Size" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label asp-for="Color">Color</label>
+                                <input asp-for="Color" class="form-control" id="productColor" placeholder="Enter color">
+                                <span asp-validation-for="Color" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label asp-for="Length">Length</label>
+                                <input asp-for="Length" type="number" class="form-control" id="productLength" placeholder="Enter length">
+                                <span asp-validation-for="Length" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label asp-for="Width">Width</label>
+                                <input asp-for="Width" type="number" class="form-control" id="productWidth" placeholder="Enter width">
+                                <span asp-validation-for="Width" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label asp-for="Height">Height</label>
+                                <input asp-for="Height" type="number" class="form-control" id="productHeight" placeholder="Enter height">
+                                <span asp-validation-for="Height" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label asp-for="Weight">Weight</label>
+                                <input asp-for="Weight" type="number" class="form-control" id="productWeight" placeholder="Enter weight">
+                                <span asp-validation-for="Weight" class="text-danger"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary">Create</button>
+                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Function to update the hidden input field with the content of the editor in real-time
+        document.getElementById("editor").addEventListener("input", function () {
+            var description = document.getElementById("editor").innerHTML;
+            document.getElementById("productDescription").value = description;
+        });
+    </script> 
+
+    <script>
+        // Ensure the DOM is fully loaded before attaching event listeners
+        document.addEventListener("DOMContentLoaded", function () {
+            var editor = document.getElementById("editor");
+            var hiddenInput = document.getElementById("productDescription");
+
+            // Function to update the hidden input field with the content of the editor in real-time
+            editor.addEventListener("input", function () {
+                hiddenInput.value = editor.innerHTML;
+            });
+
+            // Ensure the hidden input is updated on form submission as well
+            var form = editor.closest("form");
+            if (form) {
+                form.addEventListener("submit", function () {
+                    hiddenInput.value = editor.innerHTML;
+                });
+            }
+        });
+    </script>
+
+
+}
+

@@ -1,0 +1,94 @@
+﻿@page
+@model Abocar.Areas.Identity.Pages.Account.Manage.InboxModel
+@{
+    ViewData["Title"] = "Inbox";
+    var Messages = ViewData["Messages"] as List<MessageViewModel>;
+}
+
+<div class="container my-4">
+    <h1 class="mb-4">Inbox</h1>
+    <div class="container">
+        @if (Messages != null)
+        {
+            @foreach (var message in Messages)
+            {
+                <div class="row card p-1 pb-2 mb-3">
+                    <div class="container m-0 p-0">
+                        <div class="row m-0 p-0 d-flex justify-content-between align-items-end">
+                            <div class="col">
+                                <h4 class="pt-2 pb-0">@message.Message.Subject - @message.Message.SentAt.ToString("dd MMM yyyy")</h4>
+                            </div>
+                            <div class="col text-end">
+                                <h4>@message.Message.SentAt.ToString("hh:mm tt")</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="my-0" />
+                    <p class="px-3 py-2">@message.Message.Body</p>
+                    @if (message.Product != null)
+                    {
+                        <div class="container card shadow-none py-1 px-2">
+                            <div class="row ">
+                                @foreach (var products in message.Product)
+                                {
+                                    <div class=" col-5 d-flex mt-1">
+                                        <div class="flex-shrink-0">
+                                            <img src="~/@products.Image.ImagePath" alt="" width="50" class="img-fluid">
+                                        </div>
+                                        <div class="container-fluid ps-0">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div ></div>
+                                                </div>
+                                            </div>
+                                            <div class="flex-lg-grow-1 ms-3">
+                                                <h4 class="my-1"><a asp-action="Details" asp-controller="Products" asp-route-id="@products.Product.Id" asp-route-data="FromMessage" class="text-reset">@products.Product.Name</a></h4>
+                                                <h6>Color: @products.Product.Color</h6>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                Your inbox is empty.
+            </div>
+        }
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".view-message").click(function (e) {
+            e.preventDefault();
+            var messageId = $(this).data("id");
+            var messageDetailsContainer = $("#messageDetails-" + messageId);
+
+            $(".message-details-container").not(messageDetailsContainer).slideUp();
+
+            if (messageDetailsContainer.is(":visible")) {
+                messageDetailsContainer.slideUp();
+            } else {
+                $.ajax({
+                    url: '@Url.Page("Inbox", null, new { handler = "MessageDetails" })',
+                    type: 'GET',
+                    data: { messageId: messageId },
+                    success: function (data) {
+                        messageDetailsContainer.html(data).slideDown();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error fetching message details:", textStatus, errorThrown);
+                    }
+                });
+            }
+        });
+    });
+</script>

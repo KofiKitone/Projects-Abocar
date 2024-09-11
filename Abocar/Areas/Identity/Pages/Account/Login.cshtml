@@ -1,0 +1,61 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<div class="container-fluid my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <h1><center><b>Sign In</b></center></h1>
+            <hr>
+            <form id="account" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                <div class="form-floating my-3">
+                    <input type="email" class="form-control" asp-for="Input.Email" required  placeholder="Email"/>
+                    <label asp-for="Input.Email">Email</label>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <div class="form-floating my-3">
+                    <input type="password" class="form-control" asp-for="Input.Password" id="password" required />
+                    <label for="email">Password</label>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+                <div class="checkbox mb-3">
+                    <label asp-for="Input.RememberMe" class="form-label">
+                        <input class="form-check-input" asp-for="Input.RememberMe" />
+                        @Html.DisplayNameFor(m => m.Input.RememberMe)
+                    </label>
+                </div>
+                <div class="text-center d-grid mb-3">
+                    <input id="login-submit" type="submit" class="btn btn-lg btn-success" style="float:center;" Value="Login" onclick="reloadPage();">
+                </div>
+                <p class="py-0 my-0 text-center"><a class="py-0 my-0" id="forgot-password" asp-page="./ForgotPassword" style="color:#333; list-style:none;">Forgotten Password</a></p>
+                <p class="py-0 my-0 text-center"><a class="py-0 my-0" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" style=" color:#333; list-style:none;">Don't have an Account? Register</a></p>
+                <p class="py-0 my-0 text-center"><a class="py-0 my-0" id="resend-confirmation" asp-page="./ResendEmailConfirmation" style=" color:#333; list-style:none;">Resend Confirmation Code</a></p>
+            </form>
+
+            <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                <div>
+                    <p>
+                        @foreach (var provider in Model.ExternalLogins!)
+                        {
+                            <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                        }
+                    </p>
+                </div>
+            </form>
+
+        </div>
+
+        <div class="col-md-4"></div>
+
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,115 @@
+﻿@page
+@model Abocar.Areas.Identity.Pages.Account.Manage.AllOrdersModel 
+@{
+    ViewData["Title"] = "Orders";
+    var orders = ViewData["Orders"] as List<AllOrdersViewModel>;
+    string orderStatusColor = "lightred";
+    string FormatAsGhanaCedi(decimal amount)
+    {
+        return string.Format(new System.Globalization.CultureInfo("en-US"), "GH₵{0:N2}", amount);
+    }
+}
+
+<div class="container p-3" id="OrdersPage">
+    <h1 class="mb-4">Orders</h1>
+    <div class="card p-3">
+        <div class="container">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchBox" placeholder="Search for orders..." onkeyup="filterOrders()">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col w-100" style="width:100%">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order Number</th>
+                                <th>Customer</th>
+                                <th>Order Date</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTable">
+                            @if (orders != null)
+                            {
+                                @foreach (var order in orders)
+                                {
+                                    <tr class="orderRow">
+                                        <td>@order.OrderNumber</td>
+                                        <td>@order.CustomerEmail </td>
+                                        <td>@order.Date.ToString("MM/dd/yyyy")</td>
+                                        @switch (order.Status)
+                                        {
+                                            case "Pending":
+                                                orderStatusColor = "#E9F7EF";
+                                                <td style="background-color:@orderStatusColor">@order.Status</td>
+                                                break;
+                                            case "Processing":
+                                                orderStatusColor = "#ABEBC6";
+                                                <td style="background-color:@orderStatusColor">@order.Status</td>
+                                                break;
+                                            case "Quality Check":
+                                                orderStatusColor = "#58D68D";
+                                                <td style="background-color:@orderStatusColor">@order.Status</td>
+                                                break;
+                                            case "Out On Delivery":
+                                                orderStatusColor = "#2ECC71";
+                                                <td style="background-color:@orderStatusColor">@order.Status</td>
+                                                break;
+                                            case "Completed":
+                                                orderStatusColor = "green";
+                                                <td style="background-color:@orderStatusColor">@order.Status</td>
+                                                break;
+                                            case "Confirmed":
+                                                orderStatusColor = "#239B56";
+                                                <td style="background-color:@orderStatusColor">@order.Status</td>
+                                                break;
+                                            case "On Hold":
+                                                orderStatusColor = "#F1C40F";
+                                                <td style="background-color:@orderStatusColor">@order.Status</td>
+                                                break;
+                                            case "Canceled":
+                                                orderStatusColor = "#C0392B";
+                                                <td style="color:@orderStatusColor">@order.Status</td>
+                                                break;
+                                        }
+                                        <td>@FormatAsGhanaCedi(order.Total)</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a class="btn" asp-action="OrderPrecessing" asp-controller="Orders" asp-route-data="@order.OrderNumber"><i class="fa fa-eye"></i> Process</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div> 
+    </div>
+</div>
+
+<script>
+    function filterOrders() {
+        var input = document.getElementById('searchBox');
+        var filter = input.value.toLowerCase();
+        var rows = document.getElementsByClassName('orderRow');
+
+        Array.from(rows).forEach(function(row) {
+            var orderNumber = row.getElementsByTagName("td")[0].innerText.toLowerCase();
+            var userId = row.getElementsByTagName("td")[1].innerText.toLowerCase();
+            if (orderNumber.indexOf(filter) > -1 || userId.indexOf(filter) > -1) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+</script>

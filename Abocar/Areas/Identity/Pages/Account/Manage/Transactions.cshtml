@@ -1,0 +1,89 @@
+﻿@page
+@model Abocar.Areas.Identity.Pages.Account.Manage.TransactionsModel
+@{
+    ViewData["Title"] = "Transactions";
+    var transaction = ViewData["Transactions"] as List<VendorTransactionModel>;
+}
+<style>
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+    }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .table tbody + tbody {
+            border-top: 2px solid #dee2e6;
+        }
+
+        .table .table {
+            background-color: #fff;
+        }
+
+    /* Additional styles for scrollable table */
+    .table-responsive {
+        overflow-x: auto;
+    }
+</style>
+
+<div class="container my-4">
+    <h1 class="mb-4">Transactions</h1>
+
+    @if (transaction == null)
+    {
+        <div class="alert alert-info">
+            No transaction available.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Order ID</th>
+                        <th scope="col">Reference</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Qty</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Payment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var trans in transaction)
+                    {
+                        string status = "";
+                        <tr>
+                            <td>@trans.OrderId</td>
+                            <td>@trans.TransactionReference</td>
+                            <td>@trans.Email</td>
+                            <td>@trans.ProductName</td>
+                            <td>@trans.Quantity</td>
+                            <td>@trans.Price </td>
+                            <td>@(trans.Price * trans.Quantity)
+                                @if (trans.Status == true) { status = "Paid"; }
+                                (@status)
+                            </td>
+                            <td>@trans.CreatedAt.ToShortDateString()</td>
+                            <td>@trans.PaymentOption</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

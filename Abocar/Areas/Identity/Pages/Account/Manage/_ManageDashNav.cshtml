@@ -1,0 +1,17 @@
+﻿@inject SignInManager<ApplicationUser> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+
+<div class="nav flex-column nav-pills" id="manage-dash-nav" role="tablist" aria-orientation="vertical">
+    <a class="nav-link ms-0 @ManageNavPages.ProductsNavClass(ViewContext)" asp-page="./Product">My Products</a>
+    <a class="nav-link ms-0 @ManageNavPages.TransactionsNavClass(ViewContext)" asp-page="./Transactions">Transactions</a>
+    @if (User.IsInRole("Administrator"))
+    {
+        <a class="nav-link ms-0 @ManageNavPages.UsersNavClass(ViewContext)" asp-page="./Users">Users</a>
+        <a class="nav-link ms-0 @ManageNavPages.AllOrdersNavClass(ViewContext)" asp-page="./AllOrders">Orders</a>
+        <a class="nav-link ms-0 @ManageNavPages.OptionsNavClass(ViewContext)" asp-page="./Options">Options</a>
+    }
+    
+</div>
+

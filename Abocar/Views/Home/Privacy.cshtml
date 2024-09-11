@@ -1,0 +1,86 @@
+﻿@if (TempData["privacy"] as string == "Yes")
+{
+    ViewData["Title"] = "Privacy Policy";
+    <div class="container m-md-3">
+        
+        <h2>Privacy Policy</h2>
+
+        <p>Welcome to Abocar. Your privacy is critically important to us. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website. Please read this policy carefully to understand our practices regarding your information and how we will treat it.</p>
+
+        <h3>Information We Collect</h3>
+        <p>We collect several types of information from and about users of our website, including:</p>
+        <ul>
+            <li><strong>Personal Information:</strong> Information by which you may be personally identified, such as name, postal address, e-mail address, telephone number, and other identifiers by which you may be contacted online or offline.</li>
+            <li><strong>Non-Personal Information:</strong> Information that does not personally identify you, such as aggregated data about how users interact with our site.</li>
+            <li><strong>Usage Data:</strong> Information about your internet connection, the equipment you use to access our website, and usage details.</li>
+        </ul>
+
+        <h3>How We Use Your Information</h3>
+        <p>We use the information we collect in the following ways:</p>
+        <ul>
+            <li>To present our website and its contents to you.</li>
+            <li>To provide you with information, products, or services that you request from us.</li>
+            <li>To fulfill any other purpose for which you provide it.</li>
+            <li>To notify you about changes to our website or any products or services we offer or provide through it.</li>
+            <li>To allow you to participate in interactive features on our website.</li>
+            <li>To carry out our obligations and enforce our rights arising from any contracts entered into between you and us, including for billing and collection.</li>
+            <li>In any other way we may describe when you provide the information.</li>
+            <li>For any other purpose with your consent.</li>
+        </ul>
+
+        <h3>How We Protect Your Information</h3>
+        <p>We implement a variety of security measures to maintain the safety of your personal information when you place an order or enter, submit, or access your personal information.</p>
+        <p>We offer the use of a secure server. All supplied sensitive/credit information is transmitted via Secure Socket Layer (SSL) technology and then encrypted into our Payment gateway providers database only to be accessible by those authorized with special access rights to such systems, and are required to keep the information confidential.</p>
+
+        <h3>Sharing Your Information</h3>
+        <p>We do not sell, trade, or otherwise transfer to outside parties your Personally Identifiable Information unless we provide users with advance notice. This does not include website hosting partners and other parties who assist us in operating our website, conducting our business, or serving our users, so long as those parties agree to keep this information confidential. We may also release information when it's release is appropriate to comply with the law, enforce our site policies, or protect ours or others' rights, property or safety.</p>
+
+        <h3>Cookies</h3>
+        <p>We use cookies to understand and save your preferences for future visits</p>
+    </div>
+}
+else if (TempData["about"] as string == "Yes" )
+{
+    ViewData["Title"] = "About Us";
+
+    <div class="container m-3">
+        <div class="row w-75">
+            <h2>About Us</h2>
+
+            <p>Welcome to Abocar, your premier destination for buying and selling spare parts. Our multi-vendor eCommerce platform is dedicated to providing a seamless and efficient marketplace for spare parts enthusiasts, mechanics, and everyday vehicle owners.</p>
+
+            <h3>Our Mission</h3>
+            <p>At Abocar, our mission is to create a reliable and user-friendly platform that connects buyers and sellers of spare parts. We aim to simplify the process of finding and purchasing high-quality parts, ensuring that our customers can maintain and enhance their vehicles with ease.</p>
+
+            <h3>What We Offer</h3>
+            <p>Our platform offers a wide range of features designed to meet the needs of both buyers and sellers:</p>
+            <ul>
+                <li><strong>Extensive Catalog:</strong> Explore a vast selection of spare parts from various vendors, all in one place.</li>
+                <li><strong>Secure Transactions:</strong> We prioritize the security of your transactions, providing a safe environment for buying and selling.</li>
+                <li><strong>User-Friendly Interface:</strong> Our website is designed to be intuitive and easy to navigate, making it simple for users to find what they need.</li>
+                <li><strong>Vendor Dashboard:</strong> Sellers have access to a dedicated dashboard to manage their listings, track sales, and communicate with buyers.</li>
+                <li><strong>Customer Support:</strong> Our team is always ready to assist with any questions or issues you may encounter.</li>
+            </ul>
+
+            <h3>Our Journey</h3>
+            <p>Abocar was founded with the vision of revolutionizing the spare parts market. We recognized the challenges faced by both buyers and sellers in finding reliable parts and decided to create a solution that addresses these issues. Through continuous innovation and a commitment to excellence, we have grown to become a trusted name in the industry.</p>
+
+            <h3>Contact Us</h3>
+            <p>If you have any questions or need assistance, please feel free to reach out to us:</p>
+            <ul class="list-unstyled quick-links">
+                <li><a href="mailto:abocar.shop@gmail.com"><i class="fa fa-angle-double-right"></i>abocar.shop@gmail.com</a></li>
+                <li><a href="https://wa.me/+233550292531"><i class="fa fa-angle-double-right"></i>Send A WhatsApp</a></li>
+                <li><a href="tel:+233550292531"><i class="fa fa-angle-double-right"></i>Call Us</a></li>
+            </ul>
+
+            <h3>Our Team</h3>
+            <p>Our team consists of dedicated professionals with a passion for the automotive industry. We are committed to providing the best possible experience for our users, constantly seeking ways to improve and enhance our platform.</p>
+
+            <h3>Join Us</h3>
+            <p>Whether you are a buyer looking for quality spare parts or a seller wanting to reach a wider audience, Abocar is the perfect platform for you. Join our community today and experience the difference!</p>
+
+            <p>Thank you for choosing Abocar. We look forward to serving you!</p>
+        </div>
+
+    </div>
+}

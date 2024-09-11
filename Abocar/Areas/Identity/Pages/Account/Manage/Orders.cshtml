@@ -1,0 +1,155 @@
+﻿@page
+@model Abocar.Areas.Identity.Pages.Account.Manage.OrdersModel
+@{
+    ViewData["Title"] = "Orders";
+    ViewData["ActivePage"] = ManageNavPages.Orders;
+    string FormatAsGhanaCedi(decimal amount)
+    {
+        return string.Format(new System.Globalization.CultureInfo("en-US"), "GH₵{0:N2}", amount);
+    }
+
+}
+
+  <div class="container my-4">
+    <h1 class="mb-4">Orders</h1>
+    @if (Model.order.Count == 0 )
+    {
+        <div class="col-md-12 text-center mt-5">
+            <p class="text-muted">You haven't placed any orders yet.</p>
+        </div>
+    }else
+    {
+        <div class="row">
+            @foreach (var order in Model.order)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card order-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">@order.OrderNumber</h5>
+                            <span class="badge bg-info text-white">@order.OrderStatus</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-2"><i class="fas fa-calendar-alt"></i> Ordered: @order.OrderDate.ToString("dd MMM yyyy")</p>
+                            @* <p class="text-muted mb-2"><i class="fas fa-truck"></i> Delivery: @order.DeliveryOption.Name (Estimated: @order.DeliveryOption.EstimatedDeliveryTime days)</p> *@
+                            <hr>
+                            <h6 class="mb-2">Items:</h6>
+                            <ul class="list-group list-group-flush px-3">
+                                @foreach (var orderItem in order.OrderProduct)
+                                {
+                                    <li class="list-group-item">
+                                        <a class="py-0 my-0" asp-action="Details" asp-controller="Products" asp-route-id="@orderItem.ProductId" asp-route-data="FromOrder">@orderItem.ProductName (@orderItem.Quantity x @orderItem.ProductPrice)</a>
+                                    </li>
+                                }
+                            </ul>
+                            <hr>
+                            <p class="mb-0 text-right font-weight-bold">Total: <span>@FormatAsGhanaCedi(order.Total)</span></p>
+                            <div class="text-center mt-2">
+                                <form class="text-end" asp-action="DeleteOrder" asp-controller="Orders" asp-route-data="@order.UserId" asp-route-id="@order.Id" method="post">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to truncate the Order table? This action cannot be undone.')">Truncate Orders</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    
+    
+    
+    
+  </div>
+
+  <script src="https://kit.fontawesome.com/your-fontawesome-kit-code.js" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* 
+
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="container mt-4 align-content-center">
+    <form id="address-form" method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col d-block "></div>
+            <div class="col-xl-10">
+                <div class="card mb-4">
+                    <div class="card-header mb-0">Orders</div>
+                    <div class="media my-3">
+                        @foreach (var order in Model.order)
+                        {
+                            List<OrderItem> ordItems = Model.orderItem.Where(x => x.OrderId == order.Id).ToList();
+                            <div class="media my-3">
+                                <div class="col-md-4 col-lg-4">
+                                    <a href="#">
+                                        <img class="img-fluid" src="~/@order.OrderItems.FirstOrDefault()?.ProductImages.FirstOrDefault()?.ImagePath" alt="Generic placeholder image">
+                                    </a>
+                                </div>
+                                <div class="col-md-8 col-lg-8">
+                                    <div class="media-body">
+                                        <a href="#">
+                                            <span class="float-right text-info">@order.OrderStatus @order.DeliveryOption.EstimatedDeliveryTime<i class="icofont-check-circled text-success"></i></span>
+                                        </a>
+                                        <h6 class="mb-2">
+                                            <a href="#">Gus's World Famous Fried Chicken</a>
+                                        </h6>
+                                        <p class="text-gray mb-1">
+                                            <i class="icofont-location-arrow"></i> @order.Address.AdressLine @order.Address.Country, @order.Address.City,
+                                        </p>
+                                        <p class="text-gray mb-3"><i class="icofont-list"></i> ORDER #@order.Id <i class="icofont-clock-time ml-2"></i> @order.OrderDate </p>
+                                        <p class="text-dark">
+                                            **Products:**
+                                            @foreach (var orderItem in ordItems)
+                                            {
+                                                @orderItem.Product.Name
+                                            }
+
+                                        </p>
+                                        <hr>
+                                        <div class="float-right">
+                                            <a class="btn btn-sm btn-outline-primary" href="#"><i class="icofont-headphone-alt"></i> HELP</a>
+                                            <a class="btn btn-sm btn-primary" href="#"><i class="icofont-refresh"></i> REORDER</a>
+                                        </div>
+                                        <p class="mb-0 text-black text-primary pt-2">
+                                            <span class="text-black font-weight-bold"> Total Paid:</span> $300
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        
+
+
+                    </div>
+
+                   
+
+                    
+
+                </div>
+            </div>
+            <div class="col d-block "></div>
+        </div>
+    </form>
+
+</div>
+
+ *@

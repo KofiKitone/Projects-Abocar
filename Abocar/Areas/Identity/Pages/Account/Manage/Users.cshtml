@@ -1,0 +1,145 @@
+﻿@page
+@model Abocar.Areas.Identity.Pages.Account.Manage.UsersModel
+@{
+    ViewData["Title"] = "Users";
+    var allUsers = ViewData["AllUsers"] as List<userViewModel>;
+    var users = ViewData["Users"] as List<ApplicationUser>;
+    var roles = ViewData["Roles"] as List<IdentityRole>;
+    var userRoles = ViewData["UserRoles"];
+}
+
+<div class="container" id="user-page">
+    <div class="row">
+        <div class="col">
+            <h1 class="strong">Users</h1>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col">
+            <button class="btn btn-secondary" onclick="filterUsers('Admin')">Admin</button>
+            <button class="btn btn-secondary" onclick="filterUsers('Vendor')">Vendor</button>
+            <button class="btn btn-secondary" onclick="filterUsers('User')">User</button>
+            <button class="btn btn-secondary" onclick="showAllUsers()">Show All</button>
+        </div>
+    </div>
+    <div id="user-view-container" style="display: none;">
+        <div id="user-details"></div>
+        <button class="btn btn-secondary" onclick="closeUserView()">Close</button>
+    </div>
+    <div class="row mb-3">
+        <div class="col">
+            <input type="text" class="form-control" id="search-input" placeholder="Search users..." onkeyup="searchUsers()">
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Roles</th>
+                    <th>Posts</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="user-table-body">
+                @foreach (var user in allUsers)
+                {
+                    string muted = "";
+                    <tr class="text-start user-row" data-role="@user.roles" data-name="@user.user.FirstName @user.user.LastName" data-email="@user.user.Email">
+                        <td class="text-start">@user.user.FirstName @user.user.LastName</td>
+                        <td class="text-start">@user.user.Email</td>
+                        <td class="text-start">@user.roles</td>
+                        @if (user.roles.Name == "Administrator" || user.roles.Name == "Vendor")
+                        {
+                            <td>@user.posts</td>
+                        }
+                        else if (user.roles.Name == "User")
+                        {
+                            <td></td>
+                        }
+                        <td>
+                            @if (user.roles.Name == "Administrator") { muted = ""; }
+                            <button class="btn btn-primary @muted" onclick="assignRole('@user.user.Email')">Assign Role</button>
+                            <button class="btn btn-secondary" onclick="viewUser('@user.user.Id')">View</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="modal fade" id="assignRoleModal" tabindex="-1" aria-labelledby="assignRoleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="assignRoleModalLabel">Assign Role</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <partial name="_roleAssign" />
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function filterUsers(role) {
+        var rows = document.querySelectorAll('.user-row');
+        rows.forEach(function (row) {
+            if (row.getAttribute('data-role').includes(role)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    function showAllUsers() {
+        var rows = document.querySelectorAll('.user-row');
+        rows.forEach(function (row) {
+            row.style.display = '';
+        });
+    }
+
+    function searchUsers() {
+        var input = document.getElementById('search-input').value.toLowerCase();
+        var rows = document.querySelectorAll('.user-row');
+        rows.forEach(function (row) {
+            var name = row.getAttribute('data-name').toLowerCase();
+            var email = row.getAttribute('data-email').toLowerCase();
+            if (name.includes(input) || email.includes(input)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    function assignRole(email) {
+        document.getElementById("assignRoleEmail").value = email;
+        var myModal = new bootstrap.Modal(document.getElementById('assignRoleModal'));
+        myModal.show();
+    }
+
+    function viewUser(userId) {
+        // Make an AJAX call to fetch user details
+        fetch(`/User/GetUserDetails/${userId}`)
+            .then(response => response.text())
+            .then(data => {
+                // Load the user details into the _userView partial
+                document.querySelector('#user-view-container').innerHTML = data;
+                // Display the user view container
+                document.querySelector('#user-view-container').style.display = 'block';
+            })
+            .catch(error => console.error('Error fetching user details:', error));
+    }
+
+    function closeUserView() {
+        // Hide the user view container
+        document.querySelector('#user-view-container').style.display = 'none';
+    }
+</script>

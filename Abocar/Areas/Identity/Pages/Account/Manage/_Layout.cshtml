@@ -1,0 +1,76 @@
+﻿@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container px-md-4 my-3">
+    <div class="row">
+        <div class="col-md-3 px-0">
+            <div class="container">
+                <div class="row card">
+                    <div style="background-color:gray; margin-bottom:8px">
+                        <h4 class="pb-2 pt-3 px-2 mb-0 text-light">My Accont</h4>
+                    </div>
+                    <div class="px-1">
+                        <partial name="_ManageNav" />
+                    </div>
+                </div>
+                @if (User.IsInRole("Administrator") || User.IsInRole("Vendor"))
+                {
+                    <div class="row card mt-3">
+                        <div style="background-color:gray; margin-bottom:8px">
+                            <h4 class="pb-2 pt-3 px-2 mb-0 text-light">Dash</h4>
+                        </div>
+                        <div class="px-1">
+                            <div class="px-1">
+                                <partial name="_ManageDashNav" />
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-9 px-0 ">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @{
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-5">
+    <h1>Manage your account</h1>  <hr />
+    <div class="row">
+        <div class="col d-none d-sm-block"></div>  
+        <div class="col-md-8 d-flex justify-content-center"><partial name="_ManageNav" /></div>
+        <div class="col d-none d-sm-block"></div>
+    </div>
+    
+    <div class="row ">
+        @RenderBody()
+    </div>
+
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}
+ *@

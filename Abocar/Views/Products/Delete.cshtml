@@ -1,0 +1,222 @@
+﻿@model Abocar.Models.ProductDetailsVM
+@using System.Globalization;
+
+@{
+    ViewData["Title"] = "Details";
+    CultureInfo ghanaCulture = new CultureInfo("en-GH");
+    var numberOfRating = TempData["NumberOfRating"];
+    var vendor = ViewData["Vendor"] as Vendor;
+    string FormatAsGhanaCedi(decimal amount)
+    {
+        return string.Format(new System.Globalization.CultureInfo("en-US"), "GH₵{0:N2}", amount);
+    }
+}
+
+<div class="container my-5 product-detail-page">
+    <div class="card p-0">
+        <div class="row justify-content-between">
+            <div class="col-md-6 col-lg-6">
+                <div class="product-image">
+                    @{
+                        List<ProductImage> images = Model.Image.ToList();
+                    }
+                    @if (images != null && images.Any())
+                    {
+                        <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                @foreach (var image in images)
+                                {
+                                    <div class="carousel-item @if (image == images.FirstOrDefault()) {<text>active</text>}">
+                                        <img src="~/@image.ImagePath" alt="@image.Name">
+                                    </div>
+                                }
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>No images found.</p>
+                    }
+                </div>
+            </div>
+            <div class="col-md-6 p-4 col-lg-6 mt-sm-0 ">
+                <div class="product-info"> 
+                    <div class="container-fluid px-0 mx-0">
+                        <div class="row">
+                            <div class="col">
+                                @if (vendor != null)
+                                {
+                                    <h4>Vendor : <span>@vendor.UserId</span> </h4>
+                                    <h5>Created On: <span>@Model.Product.CreatedAt</span></h5>
+                                }
+                            </div>
+                            <div class="col text-end">
+                                <a class="btn btn-sm btn-outline-secondary" asp-area="Identity" asp-page="/Account/Manage/Product">Back</a>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="product-detail-name">@Model.Product.Name</h2>
+                    <p class="product-detail-description me-4">
+                        @Html.Raw(Model.Product.Description)
+                    </p>
+                    <div class="container-fluid p-0">
+                        <div class="row">
+                            <div class="col">
+                                <p class="specification">
+                                    Brand: @Model.Product.Brand <br />
+                                    Category: @Model.Product.SubCategory <br /><br />
+                                </p>
+                            </div>
+                            <div class="col">
+                                <p class="specification">
+                                    Weight: @Model.Product.Size kg <br />
+                                    Color: @Model.Product.Color <br />
+                                    Width: @Model.Product.Width m <br />
+                                    Height: @Model.Product.Height m
+                                </p>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container-fluid px-0">
+                        <div class="row px-0">
+                            <div class="col ms-0">
+                                <p class="product-detail-price">
+                                    <del style="color:red">@FormatAsGhanaCedi(Model.Product.Price)</del>
+                                    <span class="discounted-price">@FormatAsGhanaCedi(Convert.ToDecimal(Model.Product.MainPrice))</span>
+                                </p>
+                                @for (int i = 0; i < Convert.ToInt32(TempData["AverageRating"]); i++)
+                                {
+                                    <span class="fa fa-star checked my-0" style="color: #f39c12;"></span>
+                                }
+                                @for (int i = Convert.ToInt32(TempData["AverageRating"]); i < 5; i++)
+                                {
+                                    <span class="fa fa-star my-0" style="color:#ddd;"></span>
+                                }<br />
+                                <span style="color: #f39c12">( @numberOfRating )</span>
+
+
+                            </div>
+                            <div class="col col-md-4 col-lg-4 d-flex justify-content-center align-items-end">
+                                @if (User.IsInRole("Administrator"))
+                                {
+                                    <a class="add-to-cart-btn p-2 mt-4" asp-action="DeleteProduct" asp-controller="Products" asp-route-id="@Model.Product.Id" onclick="return ConfirmDelete()">Delete</a>
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card my-4 p-3">
+        <ul class="nav nav-tabs" id="productTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="description-tab" data-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="true">Description</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="reviews-tab" data-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="false">Reviews</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="productTabContent">
+            <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                <div class="p-3">
+                    <h3>Detailed Description</h3>
+                    @Html.Raw(Model.Product.FullDestription)
+                </div>
+            </div>
+            <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                <div class="p-3">
+                    <h3>Customer Reviews</h3>
+                    @if (Model.Review != null && Model.Review.Any())
+                    {
+                        @foreach (var review in Model.Review)
+                        {
+                            <div class="row">
+                                <div class="col-md-1 col-lg-1 col-2">
+                                    <img src="~/img/logo/userimage.png" class="rounded-circle" style="width:60%;" />
+                                </div>
+                                <div class="col">
+                                    <div class="media-body">
+                                        <h5 class="my-0">@review.ReviewerName</h5>
+                                        <div class="rating my-0">
+                                            @for (int i = 0; i < review.Rating; i++)
+                                            {
+                                                <span class="fa fa-star checked my-0" style="color: #f39c12;"></span>
+                                            }
+                                            @for (int i = review.Rating; i < 5; i++)
+                                            {
+                                                <span class="fa fa-star my-0" style="color: #ddd;"></span>
+                                            }
+                                        </div>
+                                        <p class="px-2">@review.ReviewText</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="mt-2" />
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const stars = document.querySelectorAll('.star-rating .fa');
+        const ratingInput = document.getElementById('Rating');
+        stars.forEach((star, index) => {
+            star.addEventListener('click', () => {
+                // Set the rating input value
+                ratingInput.value = star.getAttribute('data-rating');
+                // Remove checked class from all stars
+                stars.forEach(s => s.classList.remove('checked'));
+                // Add checked class to the clicked star and previous stars
+                for (let i = 0; i <= index; i++) {
+                    stars[i].classList.add('checked');
+                }
+            });
+        });
+    });
+
+    function confirmDelete() {
+        return confirm("Are you sure you want to delete this image?");
+    }
+</script>
+
+<style>
+    .star-rating .fa {
+        font-size: 20px;
+        cursor: pointer;
+        color: #ddd;
+    }
+
+        .star-rating .fa.checked {
+            color: #f39c12;
+        }
+
+    .media-body h5 {
+        font-weight: bold;
+    }
+
+    .media-body .rating .fa {
+        margin-right: 4px;
+    }
+</style>

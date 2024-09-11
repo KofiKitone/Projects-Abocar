@@ -1,0 +1,27 @@
+﻿@* _Notifications.cshtml *@
+<div id="notification-container" style="position: fixed; bottom: 10px; right: 10px; z-index: 1000;">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+    @if (TempData["InfoMessage"] != null)
+    {
+        <div class="alert alert-info" role="alert">
+            @TempData["InfoMessage"]
+        </div>
+    }
+    @if (TempData["WarningMessage"] != null)
+    {
+        <div class="alert alert-warning" role="alert">
+            @TempData["WarningMessage"]
+        </div>
+    }
+</div>

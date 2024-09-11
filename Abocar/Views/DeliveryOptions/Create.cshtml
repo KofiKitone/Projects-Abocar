@@ -1,0 +1,101 @@
+﻿
+@model EditOptionViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+@if (TempData["DPChoice"] as string  == "Delivery")
+{
+    <div class="container-fluid px-4 d-flex justify-content-center align-items-center" style="height: 80vh;">
+        <div class="card w-100 p-3" style="max-width: 600px;">
+            <h3 class="p-2 border-bottom">Delivery Option</h3>
+            <div class="col">
+                <form asp-action="Create" asp-controller="DeliveryOptions" asp-route-data="Delivery" >
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="DeliveryOption.Name" class="form-control" placeholder="Name" required />
+                        <label for="Name" class="control-label">Name</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="DeliveryOption.Description" class="form-control" placeholder="Description" required />
+                        <label for="Description" class="control-label">Description</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="DeliveryOption.Cost" class="form-control" placeholder="Cost" required />
+                        <label for="Cost" class="control-label">Cost</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input asp-for="DeliveryOption.isActive" class="form-check-input" type="checkbox" />
+                        <label for="IsActive" class="form-check-label">Is Active</label>
+                    </div>
+                    <div class="">
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+@if (TempData["DPChoice"] as string == "Payment")
+{
+    <div class="container-fluid px-4 d-flex justify-content-center align-items-center" style="height: 80vh;">
+        <div class="card w-100 p-3" style="max-width: 600px;">
+            <h3 class="p-2 border-bottom">Payment Option</h3>
+            <div class="col">
+                <form asp-action="Create" asp-controller="DeliveryOptions" asp-route-data="Payment" >
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="PaymentOption.Name" class="form-control" placeholder="Name" required />
+                        <label for="Name" class="control-label">Name</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="PaymentOption.Description" class="form-control" placeholder="Description" required />
+                        <label for="Description" class="control-label">Description</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input asp-for="PaymentOption.isActive"  class="form-check-input" type="checkbox" />
+                        <label class="form-check-label">Activate</label>
+                    </div>
+                    <div class="">
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+@if (TempData["DPChoice"] as string == "PickUps")
+{
+    <div class="container-fluid px-4 d-flex justify-content-center align-items-center" style="height: 80vh;">
+        <div class="card w-100 p-3" style="max-width: 600px;">
+            <h3 class="p-2 border-bottom">Pickup Locations</h3>
+            <div class="col">
+                <form asp-action="Create" asp-controller="DeliveryOptions" asp-route-data="LocalPickUp" >
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="LocalPickUp.Name" class="form-control" placeholder="Name" required />
+                        <label class="control-label">Name</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="LocalPickUp.AddressLine" class="form-control" placeholder="Address Line " required />
+                        <label class="control-label">Address Line </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input asp-for="LocalPickUp.isActive" class="form-check-input" type="checkbox" />
+                        <label for="IsActive" class="form-check-label">Is Active</label>
+                    </div>
+                    <div class="">
+                        <button   class="btn btn-primary">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}

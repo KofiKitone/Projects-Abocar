@@ -1,0 +1,50 @@
+﻿@model BrandandCat
+@{
+    ViewData["Title"] = "Edit Category";
+
+}
+
+@if (Model.active == "subCategory")
+{
+    <div class="container-fluid px-4 d-flex justify-content-center align-items-center" style="height: 80vh;">
+        <div class="card w-100 p-3" style="max-width: 600px;">
+            <h3 class="p-2 border-bottom">Edit Category</h3>
+            <div class="col">
+                <form asp-action="Edit" asp-controller="SubCategories" asp-route-data="LocalPickUp" asp-route-id="@Model/brand.Id">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="subCategory.Name" class="form-control" placeholder="Name" required />
+                        <label class="control-label">Name</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="subCategory.Description" class="form-control" placeholder="Description " required />
+                        <label class="control-label">Description </label>
+                    </div>
+                    <div class="">
+                        <button class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+else if (Model.active == "brand")
+{
+    <div class="container-fluid px-4 d-flex justify-content-center align-items-center" style="height: 80vh;">
+        <div class="card w-100 p-3" style="max-width: 600px;">
+            <h3 class="p-2 border-bottom">Edit Category</h3>
+            <div class="col">
+                <form asp-action="EditBrand" asp-controller="SubCategories" asp-route-data="LocalPickUp" asp-route-id="@Model.brand.Id">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="brand.Name" class="form-control" placeholder="Name" required />
+                        <label class="control-label">Name</label>
+                    </div>
+                    <div class="">
+                        <button class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}

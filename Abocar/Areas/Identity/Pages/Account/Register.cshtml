@@ -1,0 +1,105 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="breadcrumbs_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb_content">
+                    <ul>
+                        <li><a href="index.php">Home</a></li>
+                        <li>My Account Registration</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs area end-->
+<!-- customer login start -->
+<div class="login_page_bg">
+    <div class="container">
+        <div class="customer_login">
+            <div class="row">
+                <!--login area start-->
+                <div class="col-lg-6 col-md-6 mx-auto">
+                    <div class="">
+                        <h2>Registration</h2>
+                        <div class="panel-body">
+                            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                                <div class="row">
+                                    <div class="form-floating col-md-6">
+                                        <input asp-for="Input.FirstName" type="text" id="f_name" class="form-control" placeholder="First Name" required>
+                                        <label class="ps-4" asp-for="Input.FirstName">First Name</label>
+                                        <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating col-md-6">
+                                        <input type="text" id="l_name" asp-for="Input.LastName"class="form-control" placeholder="Last Name">
+                                        <label class="ps-4" asp-for="Input.LastName"></label>
+                                        <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="form-floating my-1 col-md-12">
+                                        <input asp-for="Input.Email" type="text" id="email" class="form-control" placeholder="Email" required>
+                                        <label class="ps-4" asp-for="Input.Email">Email</label>
+                                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="form-floating my-1 col-md-12">
+                                        <input asp-for="Input.Password" type="password" id="password" class="form-control" placeholder="Password" required>
+                                        <label class="ps-4" asp-for="Input.Password"></label>
+                                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-floating my-1 col-md-12">
+                                        <input asp-for="Input.ConfirmPassword" type="password" id="repassword" class="form-control" placeholder="Confirm Password" required>
+                                        <label class="ps-4" asp-for="Input.ConfirmPassword"></label>
+                                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="form-floating my-1 col-md-12">
+                                        <input asp-for="Input.Nationality" type="text" id="repassword" class="form-control" placeholder="Nationality" required>
+                                        <label class="ps-4" asp-for="Input.Nationality"></label>
+                                        <span asp-validation-for="Input.Nationality" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="d-grid col-md-12">
+                                    <input id="registerSubmit" type="submit" style="float:right;" value="Sign Up" type="submit" class="btn btn-success btn-lg">
+                                </div>
+                                <p class="py-0 my-0 text-center"><a class="py-0 my-0" asp-page="./Login" style=" color:#333; list-style:none;">Already have an account? </a></p>
+                                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                                    <div>
+                                        <p>
+                                            @foreach (var provider in Model.ExternalLogins!)
+                                            {
+                                                <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                            }
+                                        </p>
+                                    </div>
+                                </form>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

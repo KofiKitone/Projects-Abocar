@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li>
+            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage"><i class="fas fa-user"></i> Profile</a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Orders" title="Orders"><i class="fas fa-list"></i> My Orders</a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Wishlist" title="Wishlist"><i class="fas fa-heart"></i> My Wishlist</a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Cart" title="Cart"><i class="fas fa-shopping-cart"></i> My Cart</a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </li>
+    }
+    else
+    {
+        <li>
+            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Login"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register"><i class="fas fa-user-plus"></i> Register</a>
+        </li>
+    }
+    
+

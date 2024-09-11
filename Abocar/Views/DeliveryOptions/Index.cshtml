@@ -1,0 +1,73 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    var deliveryOptions = ViewData["DeliveryOptions"] as List<DeliveryOption>;
+    var paymentOptions = ViewData["PaymentOptions"] as List<PaymentOption>;
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create" asp-route-data="Delivery">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Cost</th>
+            <th>Estimated Delivery Date</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @if (deliveryOptions != null)
+        {
+            @foreach (var item in deliveryOptions)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+                    <td>@item.Cost</td>
+                    <td>@item.EstimatedDeliveryTime</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" asp-route-data="Delivery">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+<p>
+    <a asp-action="Create" asp-route-data="Payment">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (paymentOptions != null)
+        {
+            @foreach (var item in paymentOptions)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" asp-route-data="Payment">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

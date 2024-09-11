@@ -1,0 +1,244 @@
+﻿@model ProductViewModel
+@{
+    ViewData["Title"] = "Home Page";
+    var categories = ViewData["Categories"] as List<SubCategory>;
+    var productset = ViewData["Prods"] as IQueryable<Product>;
+    string FormatAsGhanaCedi(decimal amount)
+    {
+        return string.Format(new System.Globalization.CultureInfo("en-US"), "GH₵{0:N2}", amount);
+    }
+}
+
+<div class="container-fluid mx-0 px-0">
+    @* <div class="row bg-secondary mx-md-3 mx-lg-3" id="products">
+        <h2 class="text-light my-3 text-center">@TempData["Title"]</h2>
+    </div> *@
+    <div class="row mt-3">
+        <div class="container">
+            <div class="container-fluid">
+                <div class="row">
+
+                    <div class="col-md-3 mx-0">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <form>
+                                    <input id="search-input" class="form-control" placeholder="search product ..." />
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card mb-3">
+                            <div class="card-header">CATEGORY</div>
+                            <div class="card-body">
+                                <a asp-action="HomePage" class="bg-none" asp-controller="Home" asp-route-searchString="All">All</a><br />
+                                @foreach (var items in categories)
+                                {
+                                    <a asp-action="HomePage" class="bg-none" asp-controller="Home" asp-route-CategoryId="@items.Id">@items.Name</a>
+                                    <br />
+                                }
+                            </div>
+                        </div>
+
+                        <div class="card mb-3">
+                            <div class="card-header">PRICE (GH₵)</div>
+                            <div class="card-body">
+                                <div class="container-fluid px-0 mx-0">
+                                    <form id="filterForm" asp-action="HomePage" asp-controller="Home">
+                                        <div class="row d-flex align-items-center justify-content-center">
+                                            <label>Set a range</label>
+                                            <div class="col-5">
+                                                <input value="1" type="number" name="min" id="minPrice" placeholder="Min Price" class="form-control" />
+                                            </div>
+                                            <div class="col-5">
+                                                <input type="number" name="max" id="maxPrice" placeholder="Max Price" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary mt-2">Filter</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+
+                    <div class="col-md-9">
+                        <div class="container-fluid px-0">
+                            @if (TempData["SearchisEmpty"] as string == "No")
+                            {
+                                <p class="text-center lead">Search results for "@TempData["SearchString"]"</p>
+                            }
+                            <div class="row justify-content-center align-items-start" id="product-list">
+                                @if (Model.Product.Count() > 0)
+                                {
+                                    @foreach (var product in Model.Product)
+                                    {
+                                        int totalRating = 0;
+                                        int ratingCount = 0;
+                                        double averageRating = 0;
+                                        var images = Model.Image.FirstOrDefault(x => x.ProductId == product.Id);
+                                        var reviews = Model.Review.Where(x => x.ProductId == product.Id).ToList();
+
+                                        ratingCount = reviews.Count;
+                                        totalRating = reviews.Sum(x => x.Rating);
+
+                                        if (ratingCount > 0)
+                                        {
+                                            averageRating = (double)totalRating / ratingCount;
+                                        }
+
+                                        <div class="product-card m-2 p-0 col-3" data-name="@product.Name">
+                                            <a asp-action="Details" asp-controller="Products" asp-route-id="@product.Id">
+                                                <div class="product-image p-0">
+                                                    @if (images != null)
+                                                    {
+                                                        <img src="~/@images.ImagePath" alt="Product Image">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="~/img/product/product13.jpg" alt="Product Image">
+                                                    }
+                                                </div>
+                                            </a>
+                                            <div class="product-detals p-2">
+                                                <h2 class="product-name mb-0">@product.Name (@product.Brand)</h2>
+                                                <p class="product-price my-0">
+                                                    <span style="text-decoration:line-through; color:red;">@FormatAsGhanaCedi(product.Price)</span>
+                                                    @FormatAsGhanaCedi(Convert.ToDecimal(product.MainPrice))
+                                                </p>
+                                                <p class="product-description p-0 my-0">
+                                                    @product.Description
+                                                </p>
+                                                <div class="product-rating my-0">
+                                                    @for (int i = 0; i < Math.Floor(averageRating); i++)
+                                                    {
+                                                        <span class="fa fa-star checked" style="color: #f39c12; font-size:9px"></span>
+                                                    }
+                                                    @if (averageRating - Math.Floor(averageRating) >= 0.5)
+                                                    {
+                                                        <span class="fa fa-star-half-alt" style="color: #f39c12; font-size:9px"></span>
+                                                    }
+                                                    @for (int i = 0; i < 5 - Math.Ceiling(averageRating); i++)
+                                                    {
+                                                        <span class="fa fa-star" style="color: #c7c5bf; font-size:9px"></span>
+                                                    }
+                                                    <span>(@ratingCount reviews)</span>
+                                                </div>
+                                            </div>
+                                            <div class="container-fluid px-0">
+                                                <div class="row mx-0 px-0">
+                                                    <div class="col-8 px-0">
+                                                        <div class="add-to-car-container mb-3 mt-0">
+                                                            <a asp-action="AddToCart" asp-controller="Products" asp-route-id="@product.Id" class="add-to-cart-btn w-100 px-5">
+                                                                <i class="fas fa-shopping-cart"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4 px-0">
+                                                        <div class="add-to-car-container mx-0 px-0 mb-3 mt-0">
+                                                            <a asp-action="AddToWishlist" asp-controller="Products" asp-route-id="@product.Id" class="add-to-wishlist-btn w-100">
+                                                                <i class="fa fa-heart"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    if (TempData["PriceFilterEmpty"] as string == "Yes")
+                                    {
+                                        <div class="col-md-9">
+                                            <div class="container-fluid my-5">
+                                                <div class="d-flex justify-content-center align-items-center">
+                                                    <div class="card w-100 p-3 pt-5 d-flex justify-content-center align-items-center">
+                                                        <p style="font-size:100px" class="m-5">😥</p>
+                                                        <p class="my-3 lead">There are no available products for the selected range</p>
+                                                        <a asp-action="HomePage" asp-controller="Home" class="btn btn-success">Back</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-md-9">
+                                            <div class="container-fluid my-5">
+                                                <div class="d-flex justify-content-center align-items-center">
+                                                    <div class="card w-100 p-3 pt-5 d-flex justify-content-center align-items-center">
+                                                        <p style="font-size:100px" class="m-5">😥</p>
+                                                        <p class="my-3 lead">There are no available products for "@TempData["SearchString"]"</p>
+                                                        <a asp-action="HomePage" asp-controller="Home" class="btn btn-success">Back</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row mx-md-3 mx-lg-3 justify-content-center">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Real-time search
+    document.getElementById('search-input').addEventListener('input', function () {
+        var searchString = this.value.toLowerCase();
+        var products = document.querySelectorAll('#product-list .product-card');
+
+        products.forEach(function (product) {
+            var productName = product.getAttribute('data-name').toLowerCase();
+            if (productName.includes(searchString)) {
+                product.style.display = '';
+            } else {
+                product.style.display = 'none';
+            }
+        });
+    });
+
+    // Price filter form validation and session storage
+    document.getElementById('filterForm').addEventListener('submit', function (event) {
+        var minPrice = document.getElementById('minPrice').value;
+        var maxPrice = document.getElementById('maxPrice').value;
+
+        // Convert values to numbers
+        minPrice = Number(minPrice);
+        maxPrice = Number(maxPrice);
+
+        // Client-side validation
+        if (minPrice > maxPrice) {
+            alert("Minimum price cannot be greater than maximum price.");
+            event.preventDefault(); // Prevent form submission
+            return;
+        }
+
+        // Save values to sessionStorage
+        sessionStorage.setItem('minPrice', minPrice);
+        sessionStorage.setItem('maxPrice', maxPrice);
+    });
+
+    // Function to display values from sessionStorage in the spans
+    function displayPrices() {
+        var minPrice = sessionStorage.getItem('minPrice');
+        var maxPrice = sessionStorage.getItem('maxPrice');
+
+        if (minPrice) {
+            document.getElementById('min').textContent = minPrice;
+        }
+
+        if (maxPrice) {
+            document.getElementById('max').textContent = maxPrice;
+        }
+    }
+
+    // Call the function on page load
+    displayPrices();
+</script>

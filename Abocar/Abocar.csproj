@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-Abocar-a00dd2e4-3405-4ded-a261-ee769b15a956</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Views\OrderItems\**" />
+    <Content Remove="Views\OrderItems\**" />
+    <EmbeddedResource Remove="Views\OrderItems\**" />
+    <None Remove="Views\OrderItems\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.7.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
+    <PackageReference Include="MimeKit" Version="4.7.1" />
+    <PackageReference Include="Paystack.Net" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Identity\Pages\Account\Manage\Options\" />
+    <Folder Include="wwwroot\ProductPictures\" />
+    <Folder Include="wwwroot\ProfilePictures\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Orders\Create.cshtml" />
+    <None Include="Views\Orders\Delete.cshtml" />
+    <None Include="Views\Orders\OrderPrecessing.cshtml" />
+    <None Include="Views\Orders\Edit.cshtml" />
+    <None Include="Views\Orders\Index.cshtml" />
+    <None Include="Views\Orders\Confirmation.cshtml" />
+  </ItemGroup>
+
+</Project>

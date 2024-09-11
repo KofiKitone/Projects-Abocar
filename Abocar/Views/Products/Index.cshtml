@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Abocar.Models.Product>
+
+@{
+    ViewData["Title"] = "Product Management";
+}
+
+<div class="container my-3">
+    <div class="row">
+        <h2>Product Management</h2>
+
+        <p>
+            <a asp-action="Create" class="btn btn-primary mb-3">Create New Product</a>
+        </p>
+
+    </div>
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
+                        <p class="card-text" style="">@Html.DisplayFor(modelItem => item.Description)</p>
+                        <p class="card-text text-muted">Brand: @Html.DisplayFor(modelItem => item.Brand)</p>
+                        <p class="card-text">
+                            <del class="text-danger">GH$@Html.DisplayFor(modelItem => item.DiscountedPrice)</del>
+                            <span class="text-success">GH$@Html.DisplayFor(modelItem => item.Price)</span>
+                        </p>
+                        <p class="card-text my-0">
+                            <small class="text-muted">Created at: @Html.DisplayFor(modelItem => item.CreatedAt)</small>
+                        </p>
+                        <p class="card-text my-0">
+                            <small class="text-muted">Stock Quantity: @Html.DisplayFor(modelItem => item.StockQuantity)</small>
+                        </p>
+                        <p class="card-text my-0">
+                            <small class="text-muted">Size: @Html.DisplayFor(modelItem => item.Size)</small>
+                        </p>
+                        <p class="card-text my-0">
+                            <small class="text-muted">Color: @Html.DisplayFor(modelItem => item.Color)</small>
+                        </p>
+                        <p class="card-text my-0">
+                            <small class="text-muted">Dimensions: @Html.DisplayFor(modelItem => item.Length) x @Html.DisplayFor(modelItem => item.Width) x @Html.DisplayFor(modelItem => item.Height)</small>
+                        </p>
+                        <p class="card-text my-0">
+                            <small class="text-muted">Weight: @Html.DisplayFor(modelItem => item.Weight) kg</small>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Details</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

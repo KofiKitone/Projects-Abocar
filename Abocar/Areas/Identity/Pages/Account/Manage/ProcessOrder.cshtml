@@ -1,0 +1,75 @@
+﻿@page "{orderNumber}"
+@model Abocar.Areas.Identity.Pages.Account.Manage.ProcessOrderModel
+@{
+    ViewData["Title"] = "Orders";
+    var order = ViewData["Order"] as Order;
+}
+
+<div class="container p-3" id="OrdersPage">
+    <h1 class="mb-4">Orders</h1>
+    <div class="card p-3">
+        <div class="container">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchBox" placeholder="Search for orders..." onkeyup="filterOrders()">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col w-100" style="width:100%">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order Number</th>
+                                <th>User ID</th>
+                                <th>Order Date</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTable">
+                            @if (order != null)
+                            {
+                                <tr class="orderRow">
+                                    <td>@order.OrderNumber</td>
+                                    <td>@order.UserId</td>
+                                    <td>@order.OrderDate.ToString("MM/dd/yyyy")</td>
+                                    <td>@order.OrderStatus</td>
+                                    <td>@order.Total.ToString("C")</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn " onclick="viewOrderDetails('@order.Id')"><i class="fa fa-eye"></i></button>
+                                            <button class="btn " onclick="editOrder('@order.Id')"><i class="fa fa-pencil"></i></button>
+                                            <button class="btn " onclick="deleteOrder('@order.Id')"><i class="fa fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterOrders() {
+        var input = document.getElementById('searchBox');
+        var filter = input.value.toLowerCase();
+        var rows = document.getElementsByClassName('orderRow');
+
+        Array.from(rows).forEach(function(row) {
+            var orderNumber = row.getElementsByTagName("td")[0].innerText.toLowerCase();
+            var userId = row.getElementsByTagName("td")[1].innerText.toLowerCase();
+            if (orderNumber.indexOf(filter) > -1 || userId.indexOf(filter) > -1) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+</script>

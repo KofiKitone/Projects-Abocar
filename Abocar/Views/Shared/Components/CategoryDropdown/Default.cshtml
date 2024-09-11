@@ -1,0 +1,10 @@
+﻿@model List<SubCategory>
+
+<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+    @foreach (var category in Model)
+    {
+        <li>@category.Name
+            <a class="dropdown-item" asp-action="Index" asp-controller="Home" asp-route-id="@category.Id" asp-route-data="CategorySearch">@category.Name</a>
+        </li>
+    }
+</ul>

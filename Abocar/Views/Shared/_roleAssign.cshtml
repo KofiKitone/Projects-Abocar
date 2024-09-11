@@ -1,0 +1,15 @@
+﻿@model Abocar.Areas.Identity.Pages.Account.Manage.UsersModel
+
+<form method="post" asp-page-handler="Add">
+    <input type="hidden" id="assignRoleEmail" name="email" value="" />
+    <div class="mb-3">
+        <label for="Role" class="form-label">Role</label>
+        <select class="form-control" id="Role" name="role">
+            @foreach (var role in (List<IdentityRole>)ViewData["Roles"])
+            {
+                <option value="@role.Name">@role.Name</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Assign Role</button>
+</form>

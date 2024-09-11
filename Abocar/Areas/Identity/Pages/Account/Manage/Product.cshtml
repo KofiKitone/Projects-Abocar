@@ -1,0 +1,105 @@
+﻿@page
+@model Abocar.Areas.Identity.Pages.Account.Manage.ProductModel
+@{
+    ViewData["Title"] = "My Products";
+    var images = ViewData["ProductImages"] as List<ProductImage>;
+    var reviews = ViewData["Ratings"] as List<Review>;
+    var products = ViewData["Vendor's Products"] as List<Product>;
+    string color = "black";
+    string FormatAsGhanaCedi(decimal amount)
+    {
+        return string.Format(new System.Globalization.CultureInfo("en-US"), "GH₵{0:N2}", amount);
+    }
+}
+
+<div class="container p-3" id="AProducts">
+    <h1 class="mb-4">Products</h1>
+    <div class="card p-3 ">
+        <div class="container">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchBox" placeholder="Search for products..." onkeyup="filterProducts()">
+                    </div>
+                </div>
+                <div class="col">
+
+                </div>
+                <div class="col d-flex align-items-end justify-content-end">
+                    <a class="py-1 btn btn-outline-primary" asp-action="Create" asp-controller="Products">Add Product</a>
+                </div> 
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col w-100" style="width:100%">
+                    <table class="table">
+                        <tbody id="productTable">
+                            @if (products != null)
+                            {
+                                @foreach (var item in products)
+                                {
+                                    var productImages = images.Where(img => img.ProductId == item.Id).ToList();
+                                    var productReviews = reviews.Where(rv => rv.ProductId == item.Id).ToList();
+                                    <tr class="productRow">
+                                        <td>
+                                            <div class="d-flex mb-2">
+                                                <div class="flex-shrink-0">
+                                                    @if (productImages.Count > 0)
+                                                    {
+                                                        <img src="~/@productImages.First().ImagePath" alt="" width="35" class="img-fluid">
+                                                    }
+                                                    else
+                                                    {
+                                                        <p>No image available</p>
+                                                    }
+                                                </div>
+                                                <div class="flex-lg-grow-1 ms-3">
+                                                    @if (item.isActive == false) { color = "danger"; }else { color = "black"; }
+                                                    <h6 class="small mb-0"><a asp-action="Details" asp-controller="Products" asp-route-id="@item.Id" class="text-@color">@item.Name (@item.Brand)</a></h6>
+                                                    <span class="small">Category: @item.SubCategory</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>@item.StockQuantity</td>
+                                        <td>
+                                            <div class="container-fuild px-0 mx-0">
+                                                <div class="row d-flex">
+                                                    <div class="col"><p><del style="color:red">@FormatAsGhanaCedi(item.Price) </del>  @FormatAsGhanaCedi(Convert.ToDecimal(@item.MainPrice))</p></div>
+                                                </div>
+                                                <div class="row d-flex justify-content-between align-items-center">
+                                                    <div class="btn-group mb-0">
+                                                        <a asp-action="Details" asp-controller="Products" asp-route-data="FromAdmin" asp-route-id="@item.Id"><i class="fa fa-eye btn btn-outline-info px-2"></i></a>
+                                                        <a asp-action="Edit" asp-controller="Products" asp-route-id="@item.Id"><i class="fa fa-pencil btn btn-outline-primary px-2"></i></a>
+                                                        <a asp-action="Edit" asp-controller="Products" asp-route-id="@item.Id" asp-route-data="AddImage"><i class="fa fa-image btn btn-outline-warning px-2"></i></a>
+                                                        <a asp-action="Delete" asp-controller="Products" asp-route-id="@item.Id" ><i class="fa fa-trash btn btn-outline-danger px-2"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterProducts() {
+        var input = document.getElementById('searchBox');
+        var filter = input.value.toLowerCase();
+        var rows = document.getElementsByClassName('productRow');
+
+        Array.from(rows).forEach(function(row) {
+            var name = row.getElementsByTagName("td")[0].innerText.toLowerCase();
+            if (name.indexOf(filter) > -1) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+</script>
