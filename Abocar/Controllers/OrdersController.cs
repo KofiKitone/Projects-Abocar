@@ -60,7 +60,7 @@ namespace Abocar.Controllers
             {
                 TempData["LocalPickUp"] = LocalPickUp;
             }
-            string Token = "sk_test_0641b01e8db707ff15c8027209fdf3f7eb7e2868";
+            string Token = "will provide on demand";
             var user = await _userManager.GetUserAsync(User); var paystackApi = new PayStackApi(Token);
 
             //getting and calculating the subtotal, shipping and total cost 
@@ -201,7 +201,7 @@ namespace Abocar.Controllers
                 LocalPickUp = TempData["LocalPickUp"] as string;
             }
 
-            string Token = "sk_test_0641b01e8db707ff15c8027209fdf3f7eb7e2868";
+            string Token = "will provide on demand";
             var paystackApi = new PayStackApi(Token);
             var verifyResponse = paystackApi.Transactions.Verify(TempData["Reference"] as string);
 
