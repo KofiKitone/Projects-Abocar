@@ -244,7 +244,7 @@ namespace Abocar.Controllers
             using (var client = new MailKit.Net.Smtp.SmtpClient())
             {
                 await client.ConnectAsync("smtp.gmail.com", 465, true);
-                await client.AuthenticateAsync("abocar.shops@gmail.com", "oltmqonzmvhvmcxa");
+                await client.AuthenticateAsync("abocar.shops@gmail.com", "password");
                 await client.SendAsync(emailMessage);
                 await client.DisconnectAsync(true);
             }
