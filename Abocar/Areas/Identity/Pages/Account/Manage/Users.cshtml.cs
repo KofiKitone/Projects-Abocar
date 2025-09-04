@@ -57,6 +57,7 @@ namespace Abocar.Areas.Identity.Pages.Account.Manage
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> OnPostAddAsync(string email, string role)
         {
+
             var user = await _userManager.FindByEmailAsync(email);
             if (user != null)
             {
@@ -67,6 +68,17 @@ namespace Abocar.Areas.Identity.Pages.Account.Manage
                 }
 
                 await _userManager.AddToRoleAsync(user, role);
+                if (role == "Vendor")
+                {
+                    var vendor = new Vendor
+                    {
+                        UserId = user.Id,
+                        BusinessEmail = user.Email,
+                        IsRegistered = true,
+                        Status = "Active",
+                    };
+                    _context.Vendors.Add(vendor);
+                }
                 await _context.SaveChangesAsync();
             }
             return RedirectToPage();

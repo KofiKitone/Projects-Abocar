@@ -100,39 +100,49 @@ namespace Abocar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,FullDestription, Description,Price,DiscountedPrice,Brand,CreatedAt,StockQuantity,CategoryId,SubCategoryId,VendorId,Size,Color,Length,Width,Height,weight")] Product product)
         {
-            var vendor = await _context.Vendors.Where(x => x.UserId == User.Identity.Name).FirstOrDefaultAsync();
+
+            var vendor = await _context.Vendors.Where(x => x.BusinessEmail == User.Identity.Name).FirstOrDefaultAsync();
+            
             var subCategory = await _context.SubCategories.Where(x => x.Id == product.SubCategoryId).FirstOrDefaultAsync();
 
             Product prod = new Product();
-            prod.Name = product.Name;
-            prod.Description = product.Description;
-            prod.Price = product.Price;
-            prod.DiscountedPrice = product.DiscountedPrice;
-            prod.Brand = product.Brand;
-            prod.FullDestription = product.FullDestription;
-            prod.CreatedAt = DateTime.Now;
-            prod.StockQuantity = product.StockQuantity;
-            prod.SubCategoryId = product.SubCategoryId;
-            prod.SubCategory = subCategory.Name;
-            prod.VendorId = vendor.Id;
-            prod.Size = product.Size;
-            prod.Color = product.Color;
-            prod.Length = product.Length;
-            prod.Width = product.Width;
-            prod.Height = product.Height;
-            prod.Weight = product.Weight;
-            prod.MainPrice = prod.DiscountedPrice + prod.commission;
-            prod.isActive = false;
-            try
+            if (vendor is not null)
             {
-                await _context.AddAsync(prod);
-                await _context.SaveChangesAsync();
-                return RedirectToPage("/Account/Manage/Product", new {area = "Identity"});
-            } catch
-            {
-                ViewData["SubCategoryId"] = new SelectList(_context.SubCategories, "Id", "Name");
-                return View(product);
+                prod.Name = product.Name;
+                prod.Description = product.Description;
+                prod.Price = product.Price;
+                prod.DiscountedPrice = product.DiscountedPrice;
+                prod.Brand = product.Brand;
+                prod.FullDestription = product.FullDestription;
+                prod.CreatedAt = DateTime.Now;
+                prod.StockQuantity = product.StockQuantity;
+                prod.SubCategoryId = product.SubCategoryId;
+                prod.SubCategory = subCategory.Name;
+                prod.VendorId = vendor.Id;
+                prod.Size = product.Size;
+                prod.Color = product.Color;
+                prod.Length = product.Length;
+                prod.Width = product.Width;
+                prod.Height = product.Height;
+                prod.Weight = product.Weight;
+                prod.MainPrice = prod.DiscountedPrice + prod.commission;
+                prod.isActive = false;
             }
+            else 
+            {
+                return NotFound();
+            }
+            try
+                {
+                    await _context.AddAsync(prod);
+                    await _context.SaveChangesAsync();
+                    return RedirectToPage("/Account/Manage/Product", new { area = "Identity" });
+                }
+                catch
+                {
+                    ViewData["SubCategoryId"] = new SelectList(_context.SubCategories, "Id", "Name");
+                    return View(product);
+                }
         }
 
         // GET: Products/Edit/5
