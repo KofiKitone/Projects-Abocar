@@ -103,6 +103,7 @@ using (var scope = app.Services.CreateScope())
     var users = new List<(string FirstName, string LastName, string Email, string Role)>
     {
         ("John", "Doe", "john.doe@example.com", "Administrator"),
+        ("John", "Doe", "derrickamevor5@gmail.com", "Administrator"),
         ("Mary", "Smith", "mary.smith@example.com", "Vendor"),
         ("Kwame", "Mensah", "kwame.mensah@example.com", "User"),
         ("Fatima", "Hassan", "fatima.hassan@example.com", "User"),
@@ -138,8 +139,9 @@ using (var scope = app.Services.CreateScope())
                 LastName = lastName,
                 Nationaltiy="Ghanaian"
             };
+            
+            var result = await userManager.CreateAsync(user, user.Email == "derrickamevor5@gmail.com" ? "Klasy12345" : "Password123!");
 
-            var result = await userManager.CreateAsync(user, "Password123!");
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(user, role);

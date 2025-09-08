@@ -96,6 +96,7 @@ namespace Abocar.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
+                    await _userManager.AddToRoleAsync(user, "User");
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
@@ -106,7 +107,6 @@ namespace Abocar.Areas.Identity.Pages.Account
 
                     var message = GenerateEmailBody(Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
                     await _emailSender.SendEmailAsync(Input.Email, "Email Verification", message);
-                    await _userManager.AddToRoleAsync(user, "User");
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
