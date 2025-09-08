@@ -54,13 +54,15 @@ namespace Abocar.Controllers
         // codes for payments and transaction 
         public async Task<IActionResult> Payment(string paymentMethod, string deliveryMethod, string? LocalPickUp)
         {
+            Console.WriteLine("----------------------------------------------- starting payments");
+            Console.WriteLine(".................................................." + paymentMethod + " " + deliveryMethod + " " + LocalPickUp);
             TempData["PaymentMethod"] = paymentMethod;
             TempData["DeliveryOption"] = deliveryMethod;
             if (LocalPickUp != null || LocalPickUp != "Select Pickup Location")
             {
                 TempData["LocalPickUp"] = LocalPickUp;
             }
-            string Token = "will provide on demand";
+            string Token = "sk_test_0641b01e8db707ff15c8027209fdf3f7eb7e2868";
             var user = await _userManager.GetUserAsync(User); var paystackApi = new PayStackApi(Token);
 
             //getting and calculating the subtotal, shipping and total cost 
@@ -162,24 +164,20 @@ namespace Abocar.Controllers
                         Email = user.Email,
                         Reference = GenerateRef().ToString(),
                         Currency = "GHS",
-                        CallbackUrl = "http://localhost:5090/Orders/Confirmation" // Replace with your callback URL
+                        CallbackUrl = "http://127.0.0.1:5000/Orders/Confirmation" // Replace with your callback URL
                     };
                     TempData["Reference"] = request.Reference;
                     var initializeResponse = paystackApi.Transactions.Initialize(request);
-
+                    
                     if (initializeResponse.Status)
                     {
-                        var transaction = new Transaction
-                        {
-                            Amount = Convert.ToDecimal(grandTotal),
-                            Name = user.FirstName + " " + user.LastName,
-                            TransactionReference = request.Reference,
-                            Email = user.Email,
-                        };
-                        transaction.OrderId = "";
-                        await _context.Transactions.AddAsync(transaction);
-                        await _context.SaveChangesAsync();
+                        string name = user.FirstName + " " + user.LastName;
+                        TempData["grandTotal"] = grandTotal.ToString();
+                        TempData["UserEmail"] = user.Email;
+                        TempData["UserName"] = name;
+                        TempData["TRex"] = request.Reference;
                         return Redirect(initializeResponse.Data.AuthorizationUrl);
+
                     }
                     else
                     {
@@ -190,6 +188,26 @@ namespace Abocar.Controllers
             return View();   
         }
 
+
+        private async Task createNewT(string amount, string name, string email, string reference)
+        {
+            Console.WriteLine("------------------------------- creating new transaction");
+            Console.WriteLine("-------------------------------" + amount + " " + name + " " + email + " " + reference);
+            var transaction = new Transaction
+            {
+                // Amount = Convert.ToDecimal(amount),
+                Amount = decimal.Parse(amount),
+                Name = name,
+                TransactionReference = reference,
+                Email = email,
+                OrderId = "James"
+            };
+            Console.WriteLine("-------------------------------" + transaction.Amount + " " + transaction.Name + " " + transaction.TransactionReference + " " + transaction.Email);
+            transaction.OrderId = "";
+            await _context.Transactions.AddAsync(transaction);
+            await _context.SaveChangesAsync();
+            Console.WriteLine("------------------------------- transaction saved");
+        }
         public async Task<IActionResult> Confirmation(TransactionVerifyResponse response) // Corrected to VerifyTransactionResponse
         {
 
@@ -201,12 +219,19 @@ namespace Abocar.Controllers
                 LocalPickUp = TempData["LocalPickUp"] as string;
             }
 
-            string Token = "will provide on demand";
+            string Token = "sk_test_0641b01e8db707ff15c8027209fdf3f7eb7e2868";
             var paystackApi = new PayStackApi(Token);
             var verifyResponse = paystackApi.Transactions.Verify(TempData["Reference"] as string);
 
             if (verifyResponse.Status && verifyResponse.Data.Status == "success")
             {
+                string gTotal = TempData["grandTotal"] as string;
+                string uEmail = TempData["UserEmail"] as string;
+                string uName = TempData["UserName"] as string;
+                string tRex = TempData["TRex"] as string;
+
+                await createNewT(gTotal, uName, uEmail, tRex);
+
                 string reference = "";
                 if (TempData["Reference"] as string != null) { reference = TempData["Reference"] as string; }
                 var paymentOption = await _context.PaymentOption.Where(x => x.Id == paymentMethodId).FirstOrDefaultAsync();
@@ -456,7 +481,7 @@ namespace Abocar.Controllers
             order.DeliveryDate = parsedDate;
             if (parsedDate != null)
             {
-                var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+                var user = await _userManager.FindByIdAsync(order.UserId);
                 string Subject = "Order Processing";
                 string body = "Your order " + order.OrderNumber + " is being processed. Scheduled for delivery on " + parsedDate.ToLongDateString() + ".";
                 sendMessage(user, OrderNumber, Subject, body);
@@ -466,7 +491,7 @@ namespace Abocar.Controllers
             }
             else if  ( OrderStatus != null && OrderStatus == "Out On Delivery")
             {
-                var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+                var user = await _userManager.FindByIdAsync(order.UserId);
                 string Subject = "Out On Delivery";
                 string body = "Arriving Today. Your order " + order.OrderNumber + " is dispatched for delivery. Contact our support team if you have any concerns.";
                 sendMessage(user, OrderNumber, Subject, body);
@@ -476,7 +501,7 @@ namespace Abocar.Controllers
             }
             else if ( OrderStatus != null && OrderStatus == "Completed")
             {
-                var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+                var user = await _userManager.FindByIdAsync(order.UserId);
                 string Subject = "Delivered";
                 string body = "Completed. Your order " + order.OrderNumber + " has been successfully delivered.";
                 sendMessage(user, OrderNumber, Subject, body);
@@ -486,7 +511,8 @@ namespace Abocar.Controllers
             }
             else if (OrderStatus != null && OrderStatus == "On Hold")
             {
-                var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+                var user = await _userManager.FindByIdAsync(order.UserId);
+
                 string Subject = "On Hold";
                 string body = "Your order " + order.OrderNumber + " is currently on hold. If you have any questions, please contact our customer service";
                 sendMessage(user, OrderNumber, Subject, body);
@@ -496,7 +522,7 @@ namespace Abocar.Controllers
             }
             else if (OrderStatus != null && OrderStatus == "Cancelled")
             {
-                var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+                var user = await _userManager.FindByIdAsync(order.UserId);
                 string Subject = "Cancelled";
                 string body = "Your order " + order.OrderNumber + " has been cancelled. If you have any questions, please contact our customer service";
                 sendMessage(user, OrderNumber, Subject, body);

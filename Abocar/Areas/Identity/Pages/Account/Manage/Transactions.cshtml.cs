@@ -20,17 +20,19 @@ namespace Abocar.Areas.Identity.Pages.Account.Manage
         }
         public async Task OnGet()
         {
+            Console.WriteLine("------------------------------------------------------------------------------- James");
             var con = await _context.Order
                 .Where(x => x.isPaid == true || x.PaymentOption == "Cash On Delivery")
                 .Include(x => x.OrderProduct)
                 .ToListAsync();
+
+            var user = await _userManager.FindByEmailAsync(User.Identity?.Name);
 
             if (con != null)
             {
                 string ee = User.Identity?.Name;
                 var transactions = new List<VendorTransactionModel>();
 
-                var user = await _userManager.FindByNameAsync(ee);
                 var roles = await _userManager.GetRolesAsync(user);
 
                 bool isAdmin = roles.Contains("Administrator");
@@ -49,7 +51,8 @@ namespace Abocar.Areas.Identity.Pages.Account.Manage
                 else
                 {
                     // Fetch only the current vendor
-                    var vend = await _context.Vendors.Where(x => x.UserId == ee).FirstOrDefaultAsync();
+                    var vend = await _context.Vendors.Where(x => x.UserId == user.Id).FirstOrDefaultAsync();
+                    Console.WriteLine("---------------------------------------------------------------------- Vender Id is " + vend.Id);
                     if (vend == null)
                     {
                         // Handle case where vendor is not found
@@ -63,12 +66,16 @@ namespace Abocar.Areas.Identity.Pages.Account.Manage
 
                 foreach (var order in con)
                 {
+                    Console.WriteLine($"---------------------------------------------------------------------------------------------bogota");
+
+
                     var customer = await _userManager.FindByIdAsync(order.UserId);
 
                     if (customer != null)
                     {
                         foreach (var orderProduct in order.OrderProduct)
                         {
+                            Console.WriteLine($"---------------------------------Processing OrderProduct ID: {orderProduct.Id}, ProductId: {orderProduct.ProductId}, Quantity: {orderProduct.Quantity}");
                             var product = products.FirstOrDefault(p => p.Id == orderProduct.ProductId);
                             if (product == null) continue;
 
@@ -83,7 +90,7 @@ namespace Abocar.Areas.Identity.Pages.Account.Manage
                                 Vendor = vendor.UserId,
                                 Email = customer.Email,
                                 Name = customer.FirstName + " " + customer.LastName,
-                                ProductId = product.Id,
+                                ProductId = product.Id, 
                                 ProductName = product.Name,
                                 Price = Convert.ToDecimal(product.MainPrice),
                                 Quantity = orderProduct.Quantity,
@@ -115,6 +122,7 @@ namespace Abocar.Areas.Identity.Pages.Account.Manage
 
         public async Task LoadAsync ()
         {
+            Console.WriteLine("-----------------------------------------------------------Loading Transactions...");
             var order = await _context.Order.Where(x => x.isPaid == true).ToListAsync();
             var transactions = new List<VendorTransactionModel>();
             foreach (var item in order)

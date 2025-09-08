@@ -49,7 +49,7 @@ namespace Abocar.Areas.Identity.Pages.Account.Manage
                 else if (User.IsInRole("Vendor"))
                 {
                     var vendor = await _context.Vendors
-                        .Where(x => x.UserId == user.Email)
+                        .Where(x => x.UserId == user.Id)
                         .FirstOrDefaultAsync();
 
                     if (vendor != null)

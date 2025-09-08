@@ -62,11 +62,13 @@ namespace Abocar.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync( string data)
         {
+            Console.WriteLine("------------------------------------------- we are here -------------------------------------------");
             if (data == "FromCheckOut")
             {
                 TempData["RouteBackToCart"] = "Yes";
             }
-            var user = await _userManager.GetUserAsync(User);
+            string email = User.Identity.Name;
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
@@ -83,20 +85,19 @@ namespace Abocar.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnPostAsync(string data)
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+            Console.WriteLine("------------------------------------------The Post method of Address was called");
 
-            var user = await _userManager.GetUserAsync(User);
+            string email = User.Identity.Name;
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-
+            Console.WriteLine("User is not null " + user.Email);
             Address addre = await _context.Address.Where(x => x.UserId == user.Id).FirstOrDefaultAsync();
             if (addre == null)
             {
+                Console.WriteLine("Address is null ");
                 Address address = new Address
                 {
                     UserId = user.Id,
@@ -124,6 +125,7 @@ namespace Abocar.Areas.Identity.Pages.Account.Manage
             }
             else
             {
+                Console.WriteLine("----------------------------------------------Address is not null");
                 addre.AdressLine = Input.AddressLine;
                 addre.StreetNumber = Input.StreetNumber;
                 addre.PostalCods = Input.PostalCods;

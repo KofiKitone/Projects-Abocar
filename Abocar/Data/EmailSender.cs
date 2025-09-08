@@ -32,7 +32,7 @@ namespace Abocar.Data
             using (var client = new SmtpClient())
             {
                 await client.ConnectAsync("smtp.gmail.com", 465, true);
-                await client.AuthenticateAsync("abocar.shops@gmail.com", "password");
+                await client.AuthenticateAsync("abocar.shops@gmail.com", "mfkzqwhlpncrlwpu");
                 await client.SendAsync(emailMessage);
                 await client.DisconnectAsync(true);
             }
@@ -51,7 +51,7 @@ namespace Abocar.Data
             using (var client = new SmtpClient())
             {
                 await client.ConnectAsync("smtp.gmail.com", 465, true);
-                await client.AuthenticateAsync("abocar.shops@gmail.com", "password");
+                await client.AuthenticateAsync("abocar.shops@gmail.com", "mfkzqwhlpncrlwpu");
                 await client.SendAsync(emailMessage);
                 await client.DisconnectAsync(true);
             }
